@@ -140,6 +140,14 @@
             background: #fd7e14;
         }
 
+        .bg-red{
+            background: #dc3545;
+        }
+
+        .bg-purple{
+            background: #6f42c1;
+        }
+
         .table-card{
             background: white;
             border-radius: 20px;
@@ -239,7 +247,7 @@
 
         </div>
 
-        <!-- CARD -->
+        <!-- CARD DASHBOARD -->
 
         <div class="row">
 
@@ -339,6 +347,70 @@
 
             </div>
 
+            <!-- PENDING -->
+
+            <div class="col-md-6 mb-4">
+
+                <div class="card card-dashboard">
+
+                    <div class="card-body d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted">
+                                Transaksi Pending
+                            </h6>
+
+                            <h2 class="fw-bold text-danger">
+                                {{ $totalPending }}
+                            </h2>
+
+                        </div>
+
+                        <div class="icon-box bg-red">
+
+                            <i class="fa-solid fa-clock"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- LUNAS -->
+
+            <div class="col-md-6 mb-4">
+
+                <div class="card card-dashboard">
+
+                    <div class="card-body d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted">
+                                Transaksi Lunas
+                            </h6>
+
+                            <h2 class="fw-bold text-primary">
+                                {{ $totalLunas }}
+                            </h2>
+
+                        </div>
+
+                        <div class="icon-box bg-purple">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
         <!-- TRANSAKSI TERBARU -->
@@ -357,6 +429,7 @@
                         <th>No Faktur</th>
                         <th>Tanggal</th>
                         <th>Total</th>
+                        <th>Status</th>
                     </tr>
 
                 </thead>
@@ -377,6 +450,24 @@
 
                         <td>
                             Rp {{ number_format($t->total) }}
+                        </td>
+
+                        <td>
+
+                            @if($t->status == 'pending')
+
+                                <span class="badge bg-warning">
+                                    Pending
+                                </span>
+
+                            @else
+
+                                <span class="badge bg-success">
+                                    Lunas
+                                </span>
+
+                            @endif
+
                         </td>
 
                     </tr>

@@ -23,10 +23,10 @@ class Penjualan extends Model
     }
 
     // RELASI ke pembayaran (punya temanmu)
-    // public function pembayaran()
-    // {
-    //     return $this->hasOne(Pembayaran::class, 'penjualan_id');
-    // }
+    public function pembayaran()
+    {
+        return $this->hasOne(Pembayaran::class, 'penjualan_id');
+    }
 
     public function metodePembayaran()
     {
@@ -45,5 +45,18 @@ class Penjualan extends Model
         ->findOrFail($id);
 
     return view('penjualan.nota', compact('penjualan'));
+}
+
+    public function bayar($id)
+{
+    $penjualan = Penjualan::findOrFail($id);
+
+    // ubah status jadi lunas
+    $penjualan->status = 'lunas';
+
+    $penjualan->save();
+
+    return redirect('/penjualan')
+        ->with('success', 'Pembayaran berhasil');
 }
 }

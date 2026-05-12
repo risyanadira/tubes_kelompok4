@@ -20,6 +20,11 @@ return [
         'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
         'scheme' => 'https',
     ],
+    'midtrans' => [
+    'serverKey' => env('MIDTRANS_SERVER_KEY'),
+    'clientKey' => env('MIDTRANS_CLIENT_KEY'),
+    'isProduction' => env('MIDTRANS_IS_PRODUCTION', false),
+    ],
 
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
