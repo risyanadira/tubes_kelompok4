@@ -27,7 +27,7 @@ class Menu extends Model
         foreach ($kodemenu as $kdmenu) {
             $kd = $kdmenu->kode_menu;
         }
-        // Mengambil substring tiga digit akhir dari string PR-000
+        // Mengambil substring tiga digit akhir dari string MN-000
         $noawal = substr($kd,-3);
         $noakhir = $noawal+1; //menambahkan 1, hasilnya adalah integer cth 1
         $noakhir = 'MN'.str_pad($noakhir,3,"0",STR_PAD_LEFT); //menyambung dengan string MN-001

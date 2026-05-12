@@ -24,6 +24,13 @@ class BahanBakuResource extends Resource
     protected static ?string $pluralModelLabel = 'Bahan Baku'; 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    // tambahan buat grup masterdata
+    protected static ?string $navigationGroup = 'Masterdata';
+    
+    protected static ?string $modelLabel = 'Bahan Baku'; // Untuk judul satuan (misal: Create Bahan Baku)
+    protected static ?string $pluralModelLabel = 'Bahan Baku'; // Untuk nama di sidebar menu
+    protected static ?string $navigationIcon = 'heroicon-o-cube';
+
     public static function form(Form $form): Form
     {
         return $form
