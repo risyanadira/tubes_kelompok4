@@ -1,56 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>POS Kasir - Baso Jafra</title>
+<meta charset="UTF-8">
+<title>POS Kasir - Baso Jafra</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <style>
-        body{
-            background:#f4f7fe;
-            font-family:Segoe UI;
-        }
+<style>
 
-        /* SIDEBAR */
-        .sidebar{
-            width:250px;
-            height:100vh;
-            position:fixed;
-            left:0;
-            top:0;
-            background:linear-gradient(180deg,#0d6efd,#084298);
-            padding:25px;
-            color:white;
-        }
+body{
+    background: #f4f7fe;
+    font-family: 'Segoe UI', sans-serif;
+}
 
-        .sidebar a{
-            color:white;
-            text-decoration:none;
-            display:block;
-            margin-bottom:10px;
-        }
+/* SIDEBAR (SAMAIN DENGAN DASHBOARD) */
+.sidebar{
+    width: 250px;
+    height: 100vh;
+    background: linear-gradient(180deg, #0d6efd, #084298);
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+}
 
-        /* MAIN */
-        .main{
-            margin-left:270px;
-            padding:30px;
-        }
+.logo{
+    color: white;
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 40px;
+}
 
-        .card-box{
-            border:none;
-            border-radius:15px;
-            box-shadow:0 4px 15px rgba(0,0,0,0.08);
-            overflow:hidden;
-        }
+.sidebar-menu a{
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    transition: 0.3s;
+    font-size: 16px;
+}
 
-        .menu-img{
-            width:100%;
-            height:140px;
-            object-fit:cover;
-        }
-    </style>
+.sidebar-menu a:hover{
+    background: rgba(255,255,255,0.2);
+    transform: translateX(5px);
+}
+
+.sidebar-menu i{
+    margin-right: 10px;
+}
+
+/* LOGOUT DI BAWAH */
+.logout{
+    margin-top: auto;
+}
+
+.logout a{
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.15);
+    transition: 0.3s;
+}
+
+.logout a:hover{
+    background: rgba(255,255,255,0.25);
+}
+
+/* MAIN */
+.main{
+    margin-left: 270px;
+    padding: 30px;
+}
+
+/* CARD */
+.card-box{
+    border:none;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    overflow:hidden;
+}
+
+.menu-img{
+    width:100%;
+    height:140px;
+    object-fit:cover;
+}
+
+</style>
 </head>
 
 <body>
@@ -58,12 +101,38 @@
 <!-- SIDEBAR -->
 <div class="sidebar">
 
-    <h4>Baso Jafra</h4>
-    <hr>
+    <div>
+        <div class="logo">
+            <i class="fa-solid fa-bowl-food"></i>
+            Baso Jafra
+        </div>
 
-    <a href="/dashboard"><i class="fa fa-home"></i> Dashboard</a>
-    <a href="/penjualan"><i class="fa fa-cart-shopping"></i> Transaksi</a>
-    <a href="/logout"><i class="fa fa-right-from-bracket"></i> Logout</a>
+        <div class="sidebar-menu">
+
+            <a href="/dashboard">
+                <i class="fa-solid fa-house"></i>
+                Dashboard
+            </a>
+
+            <a href="/penjualan" class="active-menu">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Transaksi Baru
+            </a>
+
+            <a href="/laporan">
+                <i class="fa-solid fa-file-lines"></i>
+                Laporan Penjualan
+            </a>
+
+        </div>
+    </div>
+
+    <div class="logout">
+        <a href="/logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+    </div>
 
 </div>
 
@@ -85,7 +154,6 @@
 
                     <div class="card card-box">
 
-                        <!-- GAMBAR MENU -->
                         @if($m->foto)
                             <img src="{{ asset('storage/' . $m->foto) }}" class="menu-img">
                         @else
@@ -96,9 +164,7 @@
 
                         <div class="p-3 text-center">
 
-                            <h6 class="fw-bold">
-                                {{ $m->nama_menu }}
-                            </h6>
+                            <h6 class="fw-bold">{{ $m->nama_menu }}</h6>
 
                             <h5 class="text-primary">
                                 Rp {{ number_format($m->harga) }}
