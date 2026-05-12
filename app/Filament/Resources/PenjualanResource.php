@@ -6,6 +6,7 @@ use App\Filament\Resources\PenjualanResource\Pages;
 use App\Models\Penjualan;
 use App\Models\Menu;
 use App\Models\Karyawan;
+
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -19,6 +20,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Placeholder;
+
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 
@@ -29,7 +31,9 @@ class PenjualanResource extends Resource
     protected static ?string $model = Penjualan::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+
     protected static ?string $navigationGroup = 'Transaksi';
+
     protected static ?string $navigationLabel = 'Penjualan POS';
 
     /* -------------------------------------------------------------------------- */
@@ -63,8 +67,10 @@ class PenjualanResource extends Resource
                                     ->options(Karyawan::pluck('nama_pegawai', 'id'))
                                     ->searchable()
                                     ->required(),
+
                             ])
                             ->columns(2),
+
                     ]),
 
                 /* ================= STEP 2 ================= */
@@ -85,9 +91,11 @@ class PenjualanResource extends Resource
                                         $menu = Menu::find($state);
 
                                         if ($menu) {
+
                                             $qty = (int) ($get('qty') ?? 1);
 
                                             $set('harga', $menu->harga);
+
                                             $set('subtotal', $menu->harga * $qty);
 
                                             $items = $get('../../detail') ?? [];
@@ -112,6 +120,7 @@ class PenjualanResource extends Resource
                                     ->afterStateUpdated(function ($state, Get $get, Set $set) {
 
                                         $harga = (int) ($get('harga') ?? 0);
+
                                         $subtotal = $harga * (int) $state;
 
                                         $set('subtotal', $subtotal);
@@ -164,11 +173,13 @@ class PenjualanResource extends Resource
                                 'pending' => 'Pending',
                                 'lunas' => 'Lunas',
                             ])
-                            ->default('lunas')
+                            ->default('pending')
                             ->required(),
 
                     ]),
+
             ])->columnSpanFull(),
+
         ]);
     }
 
@@ -178,34 +189,65 @@ class PenjualanResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([
+        return $table
+            ->columns([
 
-            TextColumn::make('no_faktur')->searchable(),
+                TextColumn::make('no_faktur')
+                    ->label('No Faktur')
+                    ->searchable(),
 
-            TextColumn::make('tgl')->date(),
+                TextColumn::make('tgl')
+                    ->label('Tanggal')
+                    ->date(),
 
-            TextColumn::make('karyawan.nama_pegawai')->label('Kasir'),
+                TextColumn::make('karyawan.nama_pegawai')
+                    ->label('Kasir'),
 
-            TextColumn::make('metode_pembayaran')->label('Metode'),
+                TextColumn::make('metode_pembayaran')
+                    ->label('Metode'),
 
-            TextColumn::make('total')->money('IDR'),
+                TextColumn::make('total')
+                    ->money('IDR'),
 
-            TextColumn::make('status')
-                ->badge()
-                ->color(fn ($state) => match ($state) {
-                    'lunas' => 'success',
-                    'pending' => 'warning',
-                    default => 'gray',
-                }),
-        ])
-        ->actions([
-            Tables\Actions\ViewAction::make(),
-            Tables\Actions\EditAction::make(),
-            Tables\Actions\DeleteAction::make(),
-        ])
-        ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
-        ]);
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn ($state) => match ($state) {
+                        'lunas' => 'success',
+                        'pending' => 'warning',
+                        default => 'gray',
+                    }),
+
+            ])
+            ->actions([
+
+                // tombol bayar
+                Tables\Actions\Action::make('bayar')
+                    ->label('Bayar')
+                    ->icon('heroicon-o-credit-card')
+                    ->color('success')
+                    ->url(fn ($record) => route(
+                        'filament.admin.resources.pembayarans.create',
+                        [
+                            'penjualan_id' => $record->id,
+                        ]
+                    ))
+                    ->visible(fn ($record) => $record->status === 'pending'),
+
+                // tombol view
+                Tables\Actions\ViewAction::make(),
+
+                // tombol edit
+                Tables\Actions\EditAction::make(),
+
+                // tombol delete
+                Tables\Actions\DeleteAction::make(),
+
+            ])
+            ->bulkActions([
+
+                Tables\Actions\DeleteBulkAction::make(),
+
+            ]);
     }
 
     /* -------------------------------------------------------------------------- */

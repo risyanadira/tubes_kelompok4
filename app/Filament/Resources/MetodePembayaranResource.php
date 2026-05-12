@@ -45,7 +45,7 @@ class MetodePembayaranResource extends Resource
                     ->required(),
 
                 Forms\Components\TextInput::make('nomor_rekening')
-                    ->label('Nomor Rekening')
+                    ->label('Nomor Pembayaran')
                     ->numeric(),
 
                 Forms\Components\TextInput::make('atas_nama')

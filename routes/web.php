@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\PDFController;
 
+
 /* LOGIN */
 Route::get('/', [AuthController::class, 'showLoginForm']);
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -41,3 +42,9 @@ Route::post('/midtrans/token', [MidtransController::class, 'token']);
 
 /* PDF */
 Route::get('/contohpdf', [PDFController::class, 'contohpdf']);
+
+Route::get('/pembayaran/{id}', [PenjualanController::class, 'bayar']);
+
+Route::get('/midtrans/{id}', [MidtransController::class, 'bayar']);
+
+Route::get('/pembayaran-success/{id}', [MidtransController::class, 'success']);
