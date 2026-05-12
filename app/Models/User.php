@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+
+// Pastikan ada "implements FilamentUser"
+class User extends Authenticatable implements FilamentUser
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -15,29 +18,12 @@ use Filament\Panel;
 // class User extends Authenticatable
 class User extends Authenticatable implements FilamentUser // 1. Tambahkan implements
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    // ... kode lainnya ...
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Berikan nilai true agar bisa login
+        return true; 
     /**
      * The attributes that should be cast.
      *

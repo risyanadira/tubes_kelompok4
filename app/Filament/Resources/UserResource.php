@@ -70,9 +70,9 @@ class UserResource extends Resource
                     Select::make('user_group')
                         ->options([
                             'admin' => 'admin',
-                            'customer' => 'customer',
+                            'owner' => 'owner',
                         ])
-                        ->default('customer')
+                        ->default('owner')
             ]);
     }
 
@@ -85,7 +85,7 @@ class UserResource extends Resource
                 BadgeColumn::make('user_group')
                     ->color(fn ($state) => match ($state) {
                         'admin' => 'warning',
-                        'customer' => 'success',
+                        'owner' => 'success',
                         default => 'success',
                     }),
                 Tables\Columns\TextColumn::make('created_at')->searchable(),
