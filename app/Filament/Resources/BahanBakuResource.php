@@ -3,25 +3,26 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\BahanBakuResource\Pages;
-use App\Filament\Resources\rupiah;
-use App\Filament\Resources\BahanBakuResource\RelationManagers;
 use App\Models\Bahan_Baku;
-use App\Models\BahanBaku;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-// tambahan
+
+// --- IMPORT KOMPONEN ---
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
 
 class BahanBakuResource extends Resource
 {
     protected static ?string $model = Bahan_Baku::class;
+    
+    protected static ?string $modelLabel = 'Bahan Baku'; 
+    protected static ?string $pluralModelLabel = 'Bahan Baku'; 
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     // tambahan buat grup masterdata
     protected static ?string $navigationGroup = 'Masterdata';
@@ -31,36 +32,46 @@ class BahanBakuResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-cube';
 
     public static function form(Form $form): Form
-
     {
         return $form
             ->schema([
                 TextInput::make('id_bahan_baku')
-                    ->default(fn () => Bahan_Baku::getIdBahanBaku()) // Ambil default dari method getKodeBarang
-                    ->label('Id Bahan Baku')
+                    ->default(fn () => bahan_baku::getIdBahanBaku())
+                    ->label('ID Bahan Baku')
                     ->required()
-                    ->readonly() // Membuat field menjadi read-only
-                ,
+                    ->readonly(),
+
                 TextInput::make('nama_bahan_baku')
                     ->required()
-                    ->placeholder('Masukkan nama bahan baku') // Placeholder untuk membantu pengguna
-                ,
+                    ->placeholder('Contoh: Tepung Terigu'),
+
                 TextInput::make('harga_bahan_baku')
                     ->required()
-                    ->minValue(0) // Nilai minimal 0 (opsional jika tidak ingin ada harga negatif)
-                    ->reactive() // Menjadikan input reaktif terhadap perubahan
-                    ->extraAttributes(['id' => 'harga-bahan-baku']) // Tambahkan ID untuk pengikatan JavaScript
-                    ->placeholder('Masukkan harga bahan baku') // Placeholder untuk membantu pengguna
-                    ->live()
+                    ->prefix('Rp')
+                    ->live(onBlur: true)
+                    // Menghapus titik sebelum simpan ke database
+                    ->dehydrateStateUsing(fn ($state) => (int) str_replace('.', '', $state))
+                    // Menambah titik otomatis saat user mengetik
                     ->afterStateUpdated(fn ($state, callable $set) => 
-                        $set('harga_bahan_baku', number_format((int) str_replace('.', '', $state), 0, ',', '.'))
-                      )
-                ,
+                        $set('harga_bahan_baku', $state ? number_format((int) str_replace('.', '', $state), 0, ',', '.') : 0)
+                    ),
+
                 TextInput::make('stok_bahan_baku')
-                    ->required()
-                    ->placeholder('Masukkan stok bahan baku') // Placeholder untuk membantu pengguna
-                    ->minValue(0)
-                ,
+                    ->label('Stok Awal')
+                    ->numeric()
+                    ->required(),
+
+                TextInput::make('stok_minimum')
+                    ->label('Min. Stok')
+                    ->numeric()
+                    ->default(0),
+
+                TextInput::make('satuan')
+                    ->placeholder('kg, gr, pcs, dll')
+                    ->required(),
+
+                DatePicker::make('tanggal_expired')
+                    ->label('Expired'),
             ]);
     }
 
@@ -68,26 +79,39 @@ class BahanBakuResource extends Resource
     {
         return $table
             ->columns([
-               //
                 TextColumn::make('id_bahan_baku')
                     ->searchable(),
                 
-                // agar bisa di search
                 TextColumn::make('nama_bahan_baku')
                     ->searchable()
                     ->sortable(),
+
                 TextColumn::make('harga_bahan_baku')
-                ->label('Harga Bahan Baku')
-                // Menggunakan helper currency Laravel
-                ->money('IDR', locale: 'id') 
-                ->extraAttributes(['class' => 'text-right'])
-                ->sortable()
+                    ->label('Harga')
+                    ->money('IDR', locale: 'id') 
+                    ->extraAttributes(['class' => 'text-right'])
+                    ->sortable(),
+
+                TextColumn::make('stok_bahan_baku')
+                    ->label('Stok')
+                    ->sortable(),
+
+                TextColumn::make('stok_minimum')
+                    ->label('Min. Stok'),
+
+                TextColumn::make('satuan')
+                    ->badge()
+                    ->color('success')
+                    ->sortable(),
+
+                TextColumn::make('tanggal_expired')
+                    ->date()
+                    ->label('Expired'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

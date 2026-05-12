@@ -39,5 +39,21 @@ Route::get('/penjualan/nota/{id}', [PenjualanController::class, 'nota']);
 /* MIDTRANS (optional) */
 Route::post('/midtrans/token', [MidtransController::class, 'token']);
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::resource('coa', CoaController::class);
 /* PDF */
 Route::get('/contohpdf', [PDFController::class, 'contohpdf']);
