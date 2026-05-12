@@ -1,95 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Nota Penjualan</title>
+    <title>Nota</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body{
+            font-family: monospace;
+            padding:20px;
+        }
+
+        .center{
+            text-align:center;
+        }
+
+        hr{
+            border:1px dashed #000;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container mt-5">
-
-    <div class="card shadow">
-
-        <div class="card-header bg-primary text-white">
-            <h3>Nota Penjualan</h3>
-        </div>
-
-        <div class="card-body">
-
-            <p>
-                <b>No Faktur:</b>
-                {{ $penjualan->no_faktur }}
-            </p>
-
-            <p>
-                <b>Tanggal:</b>
-                {{ $penjualan->tgl }}
-            </p>
-
-            <p>
-                <b>Kasir:</b>
-                {{ $penjualan->karyawan->nama_pegawai }}
-            </p>
-
-            <p>
-                <b>Pembayaran:</b>
-                {{ $penjualan->metodePembayaran->nama_metode }}
-            </p>
-
-            <table class="table table-bordered">
-
-                <tr>
-                    <th>Menu</th>
-                    <th>Qty</th>
-                    <th>Harga</th>
-                    <th>Subtotal</th>
-                </tr>
-
-                @foreach($penjualan->detail as $d)
-
-                <tr>
-
-                    <td>
-                        {{ $d->menu->nama_menu }}
-                    </td>
-
-                    <td>
-                        {{ $d->qty }}
-                    </td>
-
-                    <td>
-                        Rp {{ number_format($d->harga) }}
-                    </td>
-
-                    <td>
-                        Rp {{ number_format($d->subtotal) }}
-                    </td>
-
-                </tr>
-
-                @endforeach
-
-                <tr>
-
-                    <th colspan="3">
-                        Total
-                    </th>
-
-                    <th>
-                        Rp {{ number_format($penjualan->total) }}
-                    </th>
-
-                </tr>
-
-            </table>
-
-        </div>
-
-    </div>
-
+<div class="center">
+    <h3>BASO JAFRA</h3>
+    <small>STRUK PEMBELIAN</small>
 </div>
+
+<hr>
+
+<p>No Faktur: {{ $penjualan->no_faktur }}</p>
+<p>Tanggal: {{ $penjualan->tgl }}</p>
+<p>Kasir: {{ $penjualan->karyawan->nama_pegawai }}</p>
+
+<hr>
+
+@foreach($penjualan->detail as $d)
+    <p>
+        {{ $d->menu->nama_menu }}<br>
+        {{ $d->qty }} x {{ number_format($d->harga) }}
+        <span style="float:right">
+            {{ number_format($d->subtotal) }}
+        </span>
+    </p>
+@endforeach
+
+<hr>
+
+<h3>Total: Rp {{ number_format($penjualan->total) }}</h3>
+
+<hr>
+
+<div class="center">
+    <small>Terima Kasih 🙏</small>
+</div>
+
+<script>
+    window.onload = function () {
+        window.print();
+
+        window.onafterprint = function () {
+            window.location.href = "/penjualan";
+        }
+    }
+</script>
 
 </body>
 </html>

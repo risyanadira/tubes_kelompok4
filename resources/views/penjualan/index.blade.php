@@ -2,430 +2,212 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POS Kasir - Baso Jafra</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
-
         body{
-            background: #f4f7fe;
-            font-family: 'Segoe UI', sans-serif;
+            background:#f4f7fe;
+            font-family:Segoe UI;
         }
 
         /* SIDEBAR */
-
         .sidebar{
-            width: 250px;
-            height: 100vh;
-            background: linear-gradient(180deg, #0d6efd, #084298);
-            position: fixed;
-            left: 0;
-            top: 0;
-            padding: 25px 20px;
-            display: flex;
-            flex-direction: column;
+            width:250px;
+            height:100vh;
+            position:fixed;
+            left:0;
+            top:0;
+            background:linear-gradient(180deg,#0d6efd,#084298);
+            padding:25px;
+            color:white;
         }
 
-        .logo{
-            color: white;
-            font-size: 26px;
-            font-weight: bold;
-            margin-bottom: 40px;
-        }
-
-        .sidebar-menu a{
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 14px 16px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            transition: 0.3s;
-            font-size: 16px;
-        }
-
-        .sidebar-menu a:hover{
-            background: rgba(255,255,255,0.2);
-            transform: translateX(5px);
-        }
-
-        .active-menu{
-            background: rgba(255,255,255,0.25);
-            font-weight: 600;
-        }
-
-        .sidebar-menu i{
-            margin-right: 10px;
-        }
-
-        .logout{
-            margin-top: auto;
-        }
-
-        .logout a{
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 14px 16px;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.15);
-            transition: 0.3s;
-        }
-
-        .logout a:hover{
-            background: rgba(255,255,255,0.25);
+        .sidebar a{
+            color:white;
+            text-decoration:none;
+            display:block;
+            margin-bottom:10px;
         }
 
         /* MAIN */
-
-        .main-content{
-            margin-left: 270px;
-            padding: 30px;
+        .main{
+            margin-left:270px;
+            padding:30px;
         }
 
-        .topbar{
-            background: white;
-            border-radius: 20px;
-            padding: 20px 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            margin-bottom: 25px;
+        .card-box{
+            border:none;
+            border-radius:15px;
+            box-shadow:0 4px 15px rgba(0,0,0,0.08);
+            overflow:hidden;
         }
 
-        .menu-card{
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: 0.3s;
-            overflow: hidden;
+        .menu-img{
+            width:100%;
+            height:140px;
+            object-fit:cover;
         }
-
-        .menu-card:hover{
-            transform: translateY(-5px);
-        }
-
-        .menu-header{
-            background: linear-gradient(90deg, #0d6efd, #3d8bfd);
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 45px;
-        }
-
-        .cart-box{
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .btn-primary{
-            border-radius: 12px;
-            padding: 10px;
-        }
-
-        .table{
-            vertical-align: middle;
-        }
-
-        .payment-box{
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            margin-top: 25px;
-        }
-
     </style>
-
 </head>
+
 <body>
 
-    <!-- SIDEBAR -->
+<!-- SIDEBAR -->
+<div class="sidebar">
 
-    <div class="sidebar">
+    <h4>Baso Jafra</h4>
+    <hr>
 
-        <div>
+    <a href="/dashboard"><i class="fa fa-home"></i> Dashboard</a>
+    <a href="/penjualan"><i class="fa fa-cart-shopping"></i> Transaksi</a>
+    <a href="/logout"><i class="fa fa-right-from-bracket"></i> Logout</a>
 
-            <div class="logo">
-                <i class="fa-solid fa-bowl-food"></i>
-                Baso Jafra
-            </div>
+</div>
 
-            <div class="sidebar-menu">
+<!-- MAIN -->
+<div class="main">
 
-                <a href="/dashboard">
-                    <i class="fa-solid fa-house"></i>
-                    Dashboard
-                </a>
+    <h3 class="fw-bold mb-4">Transaksi Baru</h3>
 
-                <a href="/penjualan" class="active-menu">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    Transaksi Baru
-                </a>
+    <div class="row">
 
-                <a href="/laporan">
-                    <i class="fa-solid fa-file-lines"></i>
-                    Laporan Penjualan
-                </a>
+        <!-- MENU -->
+        <div class="col-md-8">
 
-            </div>
+            <div class="row">
 
-        </div>
+                @forelse($menu as $m)
 
-        <div class="logout">
+                <div class="col-md-4 mb-3">
 
-            <a href="/logout">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                Logout
-            </a>
+                    <div class="card card-box">
 
-        </div>
-
-    </div>
-
-    <!-- MAIN CONTENT -->
-
-    <div class="main-content">
-
-        <!-- TOPBAR -->
-
-        <div class="topbar d-flex justify-content-between align-items-center">
-
-            <div>
-
-                <h4 class="fw-bold text-primary mb-1">
-                    Transaksi Baru
-                </h4>
-
-                <small class="text-muted">
-                    Sistem POS Baso Jafra Solo
-                </small>
-
-            </div>
-
-            <span class="badge bg-primary p-3">
-                <i class="fa-solid fa-cash-register"></i>
-                Kasir Aktif
-            </span>
-
-        </div>
-
-        <div class="row">
-
-            <!-- MENU -->
-
-            <div class="col-md-8">
-
-                <div class="row">
-
-                    @foreach($menu as $m)
-
-                    <div class="col-md-4 mb-4">
-
-                        <div class="card menu-card">
-
-                            <div class="menu-header p-0">
-
-                                <img
-                                    src="{{ asset('menu/' . $m->foto) }}"
-                                    class="w-100"
-                                    style="
-                                        height:120px;
-                                        object-fit:cover;
-                                    "
-                                >
-
+                        <!-- GAMBAR MENU -->
+                        @if($m->foto)
+                            <img src="{{ asset('storage/' . $m->foto) }}" class="menu-img">
+                        @else
+                            <div class="menu-img d-flex align-items-center justify-content-center bg-primary text-white">
+                                <i class="fa-solid fa-bowl-food fa-2x"></i>
                             </div>
-                            <div class="card-body text-center">
-
-                                <h5 class="fw-bold">
-                                    {{ $m->nama_menu }}
-                                </h5>
-
-                                <h4 class="text-primary fw-bold mb-4">
-                                    Rp {{ number_format($m->harga) }}
-                                </h4>
-
-                                <form action="/penjualan/tambah/{{ $m->id }}" method="POST">
-
-                                    @csrf
-
-                                    <button class="btn btn-primary w-100">
-
-                                        <i class="fa-solid fa-plus"></i>
-
-                                        Tambah
-
-                                    </button>
-
-                                </form>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    @endforeach
-
-                </div>
-
-            </div>
-
-            <!-- KERANJANG -->
-
-            <div class="col-md-4">
-
-                <div class="cart-box">
-
-                    <h4 class="fw-bold text-primary mb-4">
-
-                        <i class="fa-solid fa-cart-shopping"></i>
-
-                        Keranjang
-
-                    </h4>
-
-                    <table class="table table-borderless">
-
-                        @php
-                            $total = 0;
-                        @endphp
-
-                        @if(session('cart'))
-
-                            @foreach(session('cart') as $id => $item)
-
-                            @php
-                                $total += $item['subtotal'];
-                            @endphp
-
-                            <tr>
-
-                                <td>
-
-                                    <b>{{ $item['nama_menu'] }}</b>
-
-                                    <br>
-
-                                    <small class="text-muted">
-                                        {{ $item['qty'] }} x
-                                        Rp {{ number_format($item['harga']) }}
-                                    </small>
-
-                                </td>
-
-                                <td class="text-end fw-bold">
-
-                                    Rp {{ number_format($item['subtotal']) }}
-
-                                </td>
-
-                            </tr>
-
-                            @endforeach
-
                         @endif
 
-                    </table>
+                        <div class="p-3 text-center">
 
-                    <hr>
+                            <h6 class="fw-bold">
+                                {{ $m->nama_menu }}
+                            </h6>
 
-                    <div class="d-flex justify-content-between">
+                            <h5 class="text-primary">
+                                Rp {{ number_format($m->harga) }}
+                            </h5>
 
-                        <h5 class="fw-bold">
-                            Total
-                        </h5>
+                            <form action="/penjualan/tambah/{{ $m->id }}" method="POST">
+                                @csrf
+                                <button class="btn btn-primary w-100">
+                                    Tambah
+                                </button>
+                            </form>
 
-                        <h5 class="fw-bold text-primary">
-
-                            Rp {{ number_format($total) }}
-
-                        </h5>
+                        </div>
 
                     </div>
 
                 </div>
 
-                <!-- PAYMENT -->
+                @empty
+                    <p class="text-muted">Menu belum tersedia</p>
+                @endforelse
 
-                <div class="payment-box">
+            </div>
 
-                    <form action="/penjualan/simpan" method="POST">
+        </div>
 
-                        @csrf
+        <!-- CART -->
+        <div class="col-md-4">
 
-                        <div class="mb-3">
+            <div class="card card-box p-3">
 
-                            <label class="form-label">
-                                Kasir
-                            </label>
+                <h5>Keranjang</h5>
 
-                            <select name="karyawan_id" class="form-control" required>
+                @php $total = 0; @endphp
 
-                                <option value="">
-                                    -- Pilih Kasir --
-                                </option>
+                <table class="table table-borderless">
 
-                                @foreach($karyawan as $k)
+                    @if(session('cart'))
 
-                                <option value="{{ $k->id }}">
-                                    {{ $k->nama_pegawai }}
-                                </option>
+                        @foreach(session('cart') as $item)
 
-                                @endforeach
+                        @php $total += $item['subtotal']; @endphp
 
-                            </select>
+                        <tr>
+                            <td>
+                                <b>{{ $item['nama_menu'] }}</b><br>
+                                <small>{{ $item['qty'] }} x {{ number_format($item['harga']) }}</small>
+                            </td>
+                            <td class="text-end">
+                                Rp {{ number_format($item['subtotal']) }}
+                            </td>
+                        </tr>
 
-                        </div>
+                        @endforeach
 
-                        <div class="mb-4">
+                    @else
+                        <tr>
+                            <td class="text-center text-muted">
+                                Keranjang kosong
+                            </td>
+                        </tr>
+                    @endif
 
-                            <label class="form-label">
-                                Metode Pembayaran
-                            </label>
+                </table>
 
-                            <select name="kode_metode" class="form-control" required>
+                <hr>
 
-                                <option value="">
-                                    -- Pilih Metode --
-                                </option>
-
-                                @foreach($metode as $m)
-
-                                <option value="{{ $m->kode_metode }}">
-                                    {{ $m->nama_metode }}
-                                </option>
-
-                                @endforeach
-
-                            </select>
-
-                        </div>
-
-                        <button class="btn btn-success w-100 p-3 fw-bold">
-
-                            <i class="fa-solid fa-floppy-disk"></i>
-
-                            Simpan Transaksi
-
-                        </button>
-
-                    </form>
-
+                <div class="d-flex justify-content-between">
+                    <b>Total</b>
+                    <b class="text-primary">Rp {{ number_format($total) }}</b>
                 </div>
+
+            </div>
+
+            <!-- CHECKOUT -->
+            <div class="card card-box p-3 mt-3">
+
+                <form action="/penjualan/simpan" method="POST">
+                    @csrf
+
+                    <label class="form-label">Kasir</label>
+
+                    <select name="karyawan_id" class="form-control mb-3" required>
+
+                        <option value="">Pilih Kasir</option>
+
+                        @forelse($karyawan as $k)
+                            <option value="{{ $k->id }}">
+                                {{ $k->nama_pegawai }}
+                            </option>
+                        @empty
+                            <option disabled>Tidak ada data kasir</option>
+                        @endforelse
+
+                    </select>
+
+                    <button class="btn btn-success w-100">
+                        Simpan Transaksi
+                    </button>
+
+                </form>
 
             </div>
 
         </div>
 
     </div>
+
+</div>
 
 </body>
 </html>

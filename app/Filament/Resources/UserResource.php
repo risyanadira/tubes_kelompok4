@@ -19,6 +19,16 @@ use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Hash;
 use Filament\Tables\Columns\BadgeColumn;
 
+// tambahan untuk user exporter
+use Filament\Tables\Actions\ExportAction;
+use Filament\Tables\Actions\ExportBulkAction;
+use App\Filament\Exports\UserExporter;
+
+// tambahan untuk tombol unduh pdf
+use Filament\Tables\Actions\Action;
+use Barryvdh\DomPDF\Facade\Pdf; // Kalau kamu pakai DomPDF
+use Illuminate\Support\Facades\Storage;
+
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
@@ -60,9 +70,9 @@ class UserResource extends Resource
                     Select::make('user_group')
                         ->options([
                             'admin' => 'admin',
-                            'kasir' => 'kasir',
+                            'customer' => 'customer',
                         ])
-                        ->default('kasir')
+                        ->default('customer')
             ]);
     }
 
@@ -75,7 +85,7 @@ class UserResource extends Resource
                 BadgeColumn::make('user_group')
                     ->color(fn ($state) => match ($state) {
                         'admin' => 'warning',
-                        'kasir' => 'success',
+                        'customer' => 'success',
                         default => 'success',
                     }),
                 Tables\Columns\TextColumn::make('created_at')->searchable(),
@@ -88,10 +98,38 @@ class UserResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+
+            // tombol tambahan
+            ->headerActions([
+                // tombol tambahan export csv dan excel
+                ExportAction::make()->exporter(UserExporter::class)->color('success'),
+                // tombol tambahan export pdf
+                // ✅ Tombol Unduh PDF
+                Action::make('downloadPdf')
+                ->label('Unduh PDF')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('success')
+                ->action(function () {
+                    $users = User::all();
+
+                    $pdf = Pdf::loadView('pdf.users', ['users' => $users]);
+
+                    return response()->streamDownload(
+                        fn () => print($pdf->output()),
+                        'user-list.pdf'
+                    );
+                })
+            ])    
+
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+
+                // tambahan untuk export excel
+                ExportBulkAction::make()->exporter(UserExporter::class)
+                
             ]);
     }
 

@@ -4,22 +4,24 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PenjualanResource\Pages;
 use App\Models\Penjualan;
+use App\Models\Menu;
 use App\Models\Karyawan;
-use App\Models\MetodePembayaran;
-
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-
 use Filament\Tables;
 use Filament\Tables\Table;
 
-// FORM
+use Filament\Forms\Components\Wizard;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 
-// TABLE
 use Filament\Tables\Columns\TextColumn;
 
 class PenjualanResource extends Resource
@@ -27,85 +29,188 @@ class PenjualanResource extends Resource
     protected static ?string $model = Penjualan::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
-
     protected static ?string $navigationGroup = 'Transaksi';
+    protected static ?string $navigationLabel = 'Penjualan POS';
+
+    /* -------------------------------------------------------------------------- */
+    /* FORM                                                                       */
+    /* -------------------------------------------------------------------------- */
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
+        return $form->schema([
 
-                TextInput::make('no_faktur')
-                    ->default(fn () => 'TRX-' . now()->format('YmdHis'))
-                    ->required()
-                    ->readonly(),
+            Wizard::make([
 
-                DatePicker::make('tgl')
-                    ->label('Tanggal')
-                    ->default(now())
-                    ->required(),
+                /* ================= STEP 1 ================= */
+                Wizard\Step::make('Informasi')
+                    ->schema([
 
-                Select::make('pegawai_id')
-                    ->label('Karyawan')
-                    ->options(Karyawan::all()->pluck('nama_pegawai', 'id'))
-                    ->searchable()
-                    ->required(),
+                        Section::make('Data Transaksi')
+                            ->schema([
 
-                Select::make('kode_metode')
-                    ->label('Metode Pembayaran')
-                    ->options(MetodePembayaran::all()->pluck('nama_metode', 'kode_metode'))
-                    ->searchable()
-                    ->required(),
+                                TextInput::make('no_faktur')
+                                    ->default(fn () => 'TRX-' . now()->format('YmdHis'))
+                                    ->readonly()
+                                    ->required(),
 
-                TextInput::make('total')
-                    ->label('Total')
-                    ->numeric()
-                    ->prefix('Rp')
-                    ->required()
-                    ->default(0),
-            ]);
+                                DatePicker::make('tgl')
+                                    ->default(now())
+                                    ->required(),
+
+                                Select::make('karyawan_id')
+                                    ->label('Kasir')
+                                    ->options(Karyawan::pluck('nama_pegawai', 'id'))
+                                    ->searchable()
+                                    ->required(),
+                            ])
+                            ->columns(2),
+                    ]),
+
+                /* ================= STEP 2 ================= */
+                Wizard\Step::make('Menu')
+                    ->schema([
+
+                        Repeater::make('detail')
+                            ->relationship()
+                            ->schema([
+
+                                Select::make('menu_id')
+                                    ->options(Menu::pluck('nama_menu', 'id'))
+                                    ->searchable()
+                                    ->required()
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, Get $get, Set $set) {
+
+                                        $menu = Menu::find($state);
+
+                                        if ($menu) {
+                                            $qty = (int) ($get('qty') ?? 1);
+
+                                            $set('harga', $menu->harga);
+                                            $set('subtotal', $menu->harga * $qty);
+
+                                            $items = $get('../../detail') ?? [];
+
+                                            $total = collect($items)->sum(function ($item) {
+                                                return ($item['harga'] ?? 0) * ($item['qty'] ?? 0);
+                                            });
+
+                                            $set('../../total', $total);
+                                        }
+                                    }),
+
+                                TextInput::make('harga')
+                                    ->numeric()
+                                    ->prefix('Rp')
+                                    ->readonly(),
+
+                                TextInput::make('qty')
+                                    ->default(1)
+                                    ->numeric()
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, Get $get, Set $set) {
+
+                                        $harga = (int) ($get('harga') ?? 0);
+                                        $subtotal = $harga * (int) $state;
+
+                                        $set('subtotal', $subtotal);
+
+                                        $items = $get('../../detail') ?? [];
+
+                                        $total = collect($items)->sum(function ($item) {
+                                            return ($item['harga'] ?? 0) * ($item['qty'] ?? 0);
+                                        });
+
+                                        $set('../../total', $total);
+                                    }),
+
+                                TextInput::make('subtotal')
+                                    ->numeric()
+                                    ->prefix('Rp')
+                                    ->readonly(),
+
+                            ])
+                            ->columns(4)
+                            ->defaultItems(1)
+                            ->addActionLabel('Tambah Menu'),
+
+                    ]),
+
+                /* ================= STEP 3 ================= */
+                Wizard\Step::make('Pembayaran')
+                    ->schema([
+
+                        Placeholder::make('info')
+                            ->content('Pilih metode pembayaran dan simpan transaksi.'),
+
+                        TextInput::make('total')
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->readonly()
+                            ->default(0),
+
+                        Select::make('metode_pembayaran')
+                            ->label('Metode Pembayaran')
+                            ->options([
+                                'cash' => 'Cash',
+                                'transfer' => 'Transfer',
+                                'qris' => 'QRIS',
+                            ])
+                            ->required(),
+
+                        Select::make('status')
+                            ->options([
+                                'pending' => 'Pending',
+                                'lunas' => 'Lunas',
+                            ])
+                            ->default('lunas')
+                            ->required(),
+
+                    ]),
+            ])->columnSpanFull(),
+        ]);
     }
+
+    /* -------------------------------------------------------------------------- */
+    /* TABLE                                                                      */
+    /* -------------------------------------------------------------------------- */
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
+        return $table->columns([
 
-                TextColumn::make('no_faktur')
-                    ->searchable()
-                    ->sortable(),
+            TextColumn::make('no_faktur')->searchable(),
 
-                TextColumn::make('tgl')
-                    ->date()
-                    ->sortable(),
+            TextColumn::make('tgl')->date(),
 
-                TextColumn::make('karyawan.nama_pegawai')
-                    ->label('Karyawan'),
+            TextColumn::make('karyawan.nama_pegawai')->label('Kasir'),
 
-                TextColumn::make('metodePembayaran.nama_metode')
-                    ->label('Metode'),
+            TextColumn::make('metode_pembayaran')->label('Metode'),
 
-                TextColumn::make('total')
-                    ->money('IDR')
-                    ->sortable(),
+            TextColumn::make('total')->money('IDR'),
 
-            ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]);
+            TextColumn::make('status')
+                ->badge()
+                ->color(fn ($state) => match ($state) {
+                    'lunas' => 'success',
+                    'pending' => 'warning',
+                    default => 'gray',
+                }),
+        ])
+        ->actions([
+            Tables\Actions\ViewAction::make(),
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make(),
+        ])
+        ->bulkActions([
+            Tables\Actions\DeleteBulkAction::make(),
+        ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
+    /* -------------------------------------------------------------------------- */
+    /* PAGES                                                                      */
+    /* -------------------------------------------------------------------------- */
 
     public static function getPages(): array
     {

@@ -12,29 +12,38 @@ class Penjualan extends Model
         'karyawan_id',
         'no_faktur',
         'tgl',
-        'kode_metode',
-        'total'
+        'total',
+        'status',
     ];
 
-    // RELASI KE KARYAWAN
+    // RELASI ke detail (kalau ada)
+    public function detail()
+    {
+        return $this->hasMany(DetailPenjualan::class, 'penjualan_id');
+    }
+
+    // RELASI ke pembayaran (punya temanmu)
+    // public function pembayaran()
+    // {
+    //     return $this->hasOne(Pembayaran::class, 'penjualan_id');
+    // }
+
+    public function metodePembayaran()
+    {
+        return $this->belongsTo(MetodePembayaran::class, 'kode_metode', 'kode_metode');
+    }
+
+    // RELASI karyawan
     public function karyawan()
     {
         return $this->belongsTo(Karyawan::class, 'karyawan_id');
     }
 
-    // RELASI KE METODE PEMBAYARAN
-    public function metodePembayaran()
-    {
-        return $this->belongsTo(
-            MetodePembayaran::class,
-            'kode_metode',
-            'kode_metode'
-        );
-    }
+    public function nota($id)
+{
+    $penjualan = Penjualan::with(['detail.menu', 'karyawan'])
+        ->findOrFail($id);
 
-    // RELASI KE DETAIL PENJUALAN
-    public function detail()
-    {
-        return $this->hasMany(DetailPenjualan::class, 'penjualan_id');
-    }
+    return view('penjualan.nota', compact('penjualan'));
+}
 }

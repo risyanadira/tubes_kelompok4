@@ -16,21 +16,13 @@ class DetailPenjualan extends Model
         'subtotal'
     ];
 
-    // RELASI KE PENJUALAN
     public function penjualan()
     {
-        return $this->belongsTo(
-            Penjualan::class,
-            'penjualan_id'
-        );
+        return $this->belongsTo(Penjualan::class);
     }
 
-    // RELASI KE MENU
     public function menu()
     {
-        return $this->belongsTo(
-            Menu::class,
-            'menu_id'
-        );
+        return $this->belongsTo(Menu::class);
     }
 }

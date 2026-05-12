@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\MenuResource\Pages;
 use App\Models\Menu;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,17 @@ use Filament\Forms\Components\FileUpload;
 // TABLE
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
+
+// tambahan untuk user exporter
+use Filament\Tables\Actions\ExportAction;
+use Filament\Tables\Actions\ExportBulkAction;
+use App\Filament\Exports\UserExporter;
+
+// tambahan untuk tombol unduh pdf
+use Filament\Tables\Actions\Action;
+use Barryvdh\DomPDF\Facade\Pdf; // Kalau kamu pakai DomPDF
+use Illuminate\Support\Facades\Storage;
+
 
 class MenuResource extends Resource
 {
@@ -86,10 +98,13 @@ class MenuResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+
+            
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+                
             ]);
     }
 

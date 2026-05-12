@@ -1,5 +1,3 @@
-<!-- resources/views/login.blade.php -->
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -106,7 +104,7 @@
                 </div>
 
                 <!-- FORM -->
-                <form action="" method="POST">
+                <form action="{{ route('login') }}" method="POST">
 
                     @csrf
 
@@ -160,4 +158,3 @@
 
 </body>
 </html>
-```
