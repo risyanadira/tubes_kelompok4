@@ -11,15 +11,12 @@ return new class extends Migration
             $table->id();
             $table->string('id_bahan_baku');
             $table->string('nama_bahan_baku');
-            $table->string('harga_bahan_baku');
-            $table->string('stok_bahan_baku');
-
-            // 🔥 WAJIB INI (jangan diganti!)
-            $table->foreignId('supplier_id')
-                  ->constrained('suppliers')
-                  ->cascadeOnDelete();
-
-            $table->timestamps();
+            $table->integer('harga_bahan_baku');
+            $table->integer('stok_bahan_baku')->default(0);
+            $table->integer('stok_minimum')->default(0);
+            $table->string('satuan'); // Contoh: kg, gram, pcs, liter
+            $table->date('tanggal_expired')->nullable();
+    $table->timestamps();
         });
     }
 

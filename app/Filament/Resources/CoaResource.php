@@ -18,7 +18,10 @@ class CoaResource extends Resource
 {
     protected static ?string $model = Coa::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calculator';
+
+    // tambahan buat grup masterdata
+    protected static ?string $navigationGroup = 'Masterdata';
     
     protected static ?string $navigationLabel = 'COA';
 

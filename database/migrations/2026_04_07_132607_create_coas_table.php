@@ -8,13 +8,16 @@ return new class extends Migration
 {
    public function up(): void
 {
-    Schema::create('coas', function (Blueprint $table) {
-        $table->id();
-        $table->string('kode_akun')->unique();
-        $table->string('nama_akun');
-        $table->string('header_akun');
-        $table->timestamps();
-    });
+    // Tambahkan kondisi if ini
+    if (!Schema::hasTable('coas')) {
+        Schema::create('coas', function (Blueprint $table) {
+            $table->id();
+            $table->string('kode_akun');
+            $table->string('nama_akun');
+            $table->string('header_akun');
+            $table->timestamps();
+        });
+    }
 }
    
 };
