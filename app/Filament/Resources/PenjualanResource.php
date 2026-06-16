@@ -52,13 +52,11 @@ class PenjualanResource extends Resource
         return $form->schema([
             Wizard::make([
 
-                /* ================= STEP 1 ================= */
+                /* ================= STEP 1: INFORMASI ================= */
                 Wizard\Step::make('Informasi')
                     ->schema([
-
                         Section::make('Data Transaksi')
                             ->schema([
-
                                 TextInput::make('no_faktur')
                                     ->default(fn () => 'TRX-' . now()->format('YmdHis'))
                                     ->readonly()
@@ -73,43 +71,32 @@ class PenjualanResource extends Resource
                                     ->options(Karyawan::pluck('nama_pegawai', 'id'))
                                     ->searchable()
                                     ->required(),
-
                             ])
-                            ->columns(2),
-
+                            ->columns(3),
                     ]),
 
-                /* ================= STEP 2 ================= */
+                /* ================= STEP 2: PILIH MENU ================= */
                 Wizard\Step::make('Menu')
                     ->schema([
-
                         Repeater::make('detail')
                             ->relationship()
                             ->schema([
-
                                 Select::make('menu_id')
                                     ->options(Menu::pluck('nama_menu', 'id'))
                                     ->searchable()
                                     ->required()
                                     ->reactive()
                                     ->afterStateUpdated(function ($state, Get $get, Set $set) {
-
                                         $menu = Menu::find($state);
-
                                         if ($menu) {
-
                                             $qty = (int) ($get('qty') ?? 1);
-
                                             $set('harga', $menu->harga);
-
                                             $set('subtotal', $menu->harga * $qty);
 
                                             $items = $get('../../detail') ?? [];
-
                                             $total = collect($items)->sum(function ($item) {
                                                 return ($item['harga'] ?? 0) * ($item['qty'] ?? 0);
                                             });
-
                                             $set('../../total', $total);
                                         }
                                     }),
@@ -124,19 +111,14 @@ class PenjualanResource extends Resource
                                     ->numeric()
                                     ->live()
                                     ->afterStateUpdated(function ($state, Get $get, Set $set) {
-
                                         $harga = (int) ($get('harga') ?? 0);
-
                                         $subtotal = $harga * (int) $state;
-
                                         $set('subtotal', $subtotal);
 
                                         $items = $get('../../detail') ?? [];
-
                                         $total = collect($items)->sum(function ($item) {
                                             return ($item['harga'] ?? 0) * ($item['qty'] ?? 0);
                                         });
-
                                         $set('../../total', $total);
                                     }),
 
@@ -144,29 +126,29 @@ class PenjualanResource extends Resource
                                     ->numeric()
                                     ->prefix('Rp')
                                     ->readonly(),
-
                             ])
                             ->columns(4)
                             ->defaultItems(1)
                             ->addActionLabel('Tambah Menu'),
-
                     ]),
 
-                /* ================= STEP 3 ================= */
+                /* ================= STEP 3: PEMBAYARAN ================= */
                 Wizard\Step::make('Pembayaran')
                     ->schema([
-
                         Placeholder::make('info')
                             ->content('Pilih metode pembayaran dan simpan transaksi.'),
 
                         TextInput::make('total')
                             ->numeric()
                             ->prefix('Rp')
-                Wizard\Step::make('Informasi')->schema([
-                    Section::make('Data Transaksi')->schema([
-                        TextInput::make('no_faktur')
-                            ->default(fn () => 'TRX-' . now()->format('YmdHis'))
-                            ->readonly()
+                            ->readonly(),
+
+                        Select::make('metode_pembayaran')
+                            ->options([
+                                'cash' => 'Cash',
+                                'transfer' => 'Transfer',
+                                'qris' => 'QRIS',
+                            ])
                             ->required(),
 
                         Select::make('status')
@@ -174,76 +156,10 @@ class PenjualanResource extends Resource
                                 'pending' => 'Pending',
                                 'lunas' => 'Lunas',
                             ])
-                            ->default('pending')
+                            ->default('lunas')
                             ->required(),
-
                     ]),
-
-                        DatePicker::make('tgl')
-                            ->default(now())
-                            ->required(),
-
-                        Select::make('karyawan_id')
-                            ->label('Kasir')
-                            ->options(Karyawan::pluck('nama_pegawai', 'id'))
-                            ->searchable()
-                            ->required(),
-                    ])->columns(2),
-                ]),
-
-                Wizard\Step::make('Menu')->schema([
-                    Repeater::make('detail')
-                        ->relationship()
-                        ->schema([
-                            Select::make('menu_id')
-                                ->options(Menu::pluck('nama_menu', 'id'))
-                                ->searchable()
-                                ->required()
-                                ->reactive(),
-
-                            TextInput::make('harga')
-                                ->numeric()
-                                ->prefix('Rp')
-                                ->readonly(),
-
-                            TextInput::make('qty')
-                                ->numeric()
-                                ->default(1),
-
-                            TextInput::make('subtotal')
-                                ->numeric()
-                                ->prefix('Rp')
-                                ->readonly(),
-                        ])
-                        ->columns(3)
-                        ->defaultItems(1)
-                        ->addActionLabel('Tambah Menu'),
-                ]),
-
-                Wizard\Step::make('Pembayaran')->schema([
-                    TextInput::make('total')
-                        ->numeric()
-                        ->prefix('Rp')
-                        ->readonly(),
-
-                    Select::make('metode_pembayaran')
-                        ->options([
-                            'cash' => 'Cash',
-                            'transfer' => 'Transfer',
-                            'qris' => 'QRIS',
-                        ])
-                        ->required(),
-
-                    Select::make('status')
-                        ->options([
-                            'pending' => 'Pending',
-                            'lunas' => 'Lunas',
-                        ])
-                        ->default('lunas')
-                        ->required(),
-                ]),
             ])->columnSpanFull(),
-
         ]);
     }
 
@@ -255,7 +171,6 @@ class PenjualanResource extends Resource
     {
         return $table
             ->columns([
-
                 TextColumn::make('no_faktur')
                     ->label('No Faktur')
                     ->searchable(),
@@ -280,91 +195,51 @@ class PenjualanResource extends Resource
                         'pending' => 'warning',
                         default => 'gray',
                     }),
-
             ])
             ->actions([
-
-                // tombol bayar
+                // Tombol Bayar Langsung (Khusus status pending)
                 Tables\Actions\Action::make('bayar')
                     ->label('Bayar')
                     ->icon('heroicon-o-credit-card')
                     ->color('success')
                     ->url(fn ($record) => route(
                         'filament.admin.resources.pembayarans.create',
-                        [
-                            'penjualan_id' => $record->id,
-                        ]
+                        ['penjualan_id' => $record->id]
                     ))
                     ->visible(fn ($record) => $record->status === 'pending'),
 
-                // tombol view
                 Tables\Actions\ViewAction::make(),
-
-                // tombol edit
                 Tables\Actions\EditAction::make(),
-
-                // tombol delete
                 Tables\Actions\DeleteAction::make(),
+            ])
+            ->headerActions([
+                // Export Excel Kelompok 4
+                ExportAction::make()
+                    ->exporter(PenjualanExporter::class)
+                    ->color('success'),
 
+                // Cetak PDF Laporan
+                Action::make('downloadPdf')
+                    ->label('Unduh PDF Laporan')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('danger')
+                    ->action(function () {
+                        $penjualan = Penjualan::with('karyawan', 'detail.menu')->get();
+                        $pdf = Pdf::loadView('pdf.penjualan', [
+                            'penjualan' => $penjualan
+                        ]);
+
+                        return response()->streamDownload(
+                            fn () => print($pdf->output()),
+                            'laporan-penjualan.pdf'
+                        );
+                    }),
             ])
             ->bulkActions([
-
                 Tables\Actions\DeleteBulkAction::make(),
-
+                ExportBulkAction::make()
+                    ->exporter(PenjualanExporter::class),
             ]);
-        return $table->columns([
-            TextColumn::make('no_faktur')->searchable(),
-            TextColumn::make('tgl')->date(),
-            TextColumn::make('karyawan.nama_pegawai')->label('Kasir'),
-            TextColumn::make('total')->money('IDR'),
-
-            TextColumn::make('status')
-                ->badge()
-                ->color(fn ($state) => match ($state) {
-                    'lunas' => 'success',
-                    'pending' => 'warning',
-                    default => 'gray',
-                }),
-        ])
-        ->actions([
-            Tables\Actions\ViewAction::make(),
-            Tables\Actions\EditAction::make(),
-            Tables\Actions\DeleteAction::make(),
-        ])
-
-        ->headerActions([
-
-            // EXPORT EXCEL
-            ExportAction::make()
-                ->exporter(PenjualanExporter::class)
-                ->color('success'),
-
-            // PDF ADMIN REPORT (SEMUA TRANSAKSI + DETAIL MENU)
-            Action::make('downloadPdf')
-                ->label('Unduh PDF Laporan')
-                ->icon('heroicon-o-document-arrow-down')
-                ->color('danger')
-                ->action(function () {
-
-                    $penjualan = Penjualan::with('karyawan', 'detail.menu')->get();
-
-                    $pdf = Pdf::loadView('pdf.penjualan', [
-                        'penjualan' => $penjualan
-                    ]);
-
-                    return response()->streamDownload(
-                        fn () => print($pdf->output()),
-                        'laporan-penjualan.pdf'
-                    );
-                }),
-        ])
-
-        ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
-
-            ExportBulkAction::make()
-                ->exporter(PenjualanExporter::class),
-        ]);
     }
 
     public static function getPages(): array

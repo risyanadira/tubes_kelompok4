@@ -14,15 +14,10 @@ class SupplierResource extends Resource
 {
     protected static ?string $model = Supplier::class;
 
-<<<<<<< HEAD
-    // Ikon diganti agar sama dengan Bahan Baku
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-=======
+    // Kode navigasi yang sudah dibersihkan dari conflict markers
     protected static ?string $navigationIcon = 'heroicon-o-truck';
 
-    // tambahan buat grup masterdata
     protected static ?string $navigationGroup = 'Masterdata';
->>>>>>> 1e493812c591d84e8c40eacbdad9e4eaa7474380
 
     protected static ?string $navigationLabel = 'Master Supplier';
 

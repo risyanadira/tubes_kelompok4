@@ -20,23 +20,18 @@ class BahanBakuResource extends Resource
 {
     protected static ?string $model = Bahan_Baku::class;
     
+    // Properti yang sudah dirapikan (tidak duplikat lagi)
     protected static ?string $modelLabel = 'Bahan Baku'; 
     protected static ?string $pluralModelLabel = 'Bahan Baku'; 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    // tambahan buat grup masterdata
-    protected static ?string $navigationGroup = 'Masterdata';
-    
-    protected static ?string $modelLabel = 'Bahan Baku'; // Untuk judul satuan (misal: Create Bahan Baku)
-    protected static ?string $pluralModelLabel = 'Bahan Baku'; // Untuk nama di sidebar menu
     protected static ?string $navigationIcon = 'heroicon-o-cube';
+    protected static ?string $navigationGroup = 'Masterdata';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('id_bahan_baku')
-                    ->default(fn () => bahan_baku::getIdBahanBaku())
+                    ->default(fn () => Bahan_Baku::getIdBahanBaku()) // Memastikan nama class model konsisten capital
                     ->label('ID Bahan Baku')
                     ->required()
                     ->readonly(),

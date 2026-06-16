@@ -10,6 +10,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\PDFController;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
 /* LOGIN */
 Route::get('/', [AuthController::class, 'showLoginForm']);
@@ -37,30 +42,11 @@ Route::post('/penjualan/tambah/{id}', [PenjualanController::class, 'tambah']);
 Route::post('/penjualan/simpan', [PenjualanController::class, 'simpan']);
 Route::get('/penjualan/nota/{id}', [PenjualanController::class, 'nota']);
 
-/* MIDTRANS (optional) */
+/* MIDTRANS & PEMBAYARAN */
 Route::post('/midtrans/token', [MidtransController::class, 'token']);
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::resource('coa', CoaController::class);
-/* PDF */
-Route::get('/contohpdf', [PDFController::class, 'contohpdf']);
-
-Route::get('/pembayaran/{id}', [PenjualanController::class, 'bayar']);
-
 Route::get('/midtrans/{id}', [MidtransController::class, 'bayar']);
-
+Route::get('/pembayaran/{id}', [PenjualanController::class, 'bayar']);
 Route::get('/pembayaran-success/{id}', [MidtransController::class, 'success']);
+
+/* PDF REPORT */
+Route::get('/contohpdf', [PDFController::class, 'contohpdf']);
