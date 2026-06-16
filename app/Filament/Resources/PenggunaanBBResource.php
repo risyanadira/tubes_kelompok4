@@ -24,7 +24,11 @@ class PenggunaanBBResource extends Resource
     // Tambahkan ini agar route-nya jelas dan tidak error "b-bs"
     protected static ?string $slug = 'penggunaan_bb';
 
+    protected static ?string $navigationGroup = 'Transaksi';
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationLabel = 'Penggunaan BB';
 
     public static function form(Form $form): Form
 {

@@ -14,10 +14,12 @@ class PembelianResource extends Resource
 {
     protected static ?string $model = Pembelian::class;
 
+    protected static ?string $navigationGroup = 'Transaksi';
+
     // Ikon diubah agar seragam dengan Bahan Baku dan Master Supplier
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationLabel = 'Transaksi Pembelian';
+    protected static ?string $navigationLabel = 'Pembelian';
 
     public static function form(Form $form): Form
     {

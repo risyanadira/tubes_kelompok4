@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('user_group',20)
-                ->default('customer');
+        Schema::table('ai_insight', function (Blueprint $table) {
+            $table->string('tipe')->nullable();
         });
     }
 
@@ -22,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('ai_insight', function (Blueprint $table) {
             //
         });
     }

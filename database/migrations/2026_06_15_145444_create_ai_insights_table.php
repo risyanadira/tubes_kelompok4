@@ -1,21 +1,28 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('suppliers', function (Blueprint $table) {
-            $table->id(); // BIGINT UNSIGNED (PENTING)
-            $table->string('nama_supplier');
+        Schema::create('ai_insight', function (Blueprint $table) {
+            $table->id();
+            $table->longText('insight');
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('suppliers');
+        Schema::dropIfExists('ai_insight');
     }
 };
