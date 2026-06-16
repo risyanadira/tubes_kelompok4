@@ -29,12 +29,19 @@
             display: flex;
             flex-direction: column;
         }
-
         .logo{
             color: white;
             font-size: 26px;
             font-weight: bold;
             margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .logo img{
+            width: 80px;
+            height: auto;
+            border-radius: 12px;
+
         }
 
         .sidebar-menu a{
@@ -140,6 +147,14 @@
             background: #fd7e14;
         }
 
+        .bg-red{
+            background: #dc3545;
+        }
+
+        .bg-purple{
+            background: #6f42c1;
+        }
+
         .table-card{
             background: white;
             border-radius: 20px;
@@ -158,9 +173,16 @@
 
         <div>
 
-            <div class="logo">
-                <i class="fa-solid fa-bowl-food"></i>
-                Baso Jafra
+            <div class="logo text-center">
+
+                <img src="{{ asset('logo.png') }}"
+                    alt="Logo Baso Jafra"
+                    style="width:80px; height:auto; margin-bottom:10px;">
+
+                <div>
+                    Baso Jafra
+                </div>
+
             </div>
 
             <div class="sidebar-menu">
@@ -239,7 +261,7 @@
 
         </div>
 
-        <!-- CARD -->
+        <!-- CARD DASHBOARD -->
 
         <div class="row">
 
@@ -339,6 +361,70 @@
 
             </div>
 
+            <!-- PENDING -->
+
+            <div class="col-md-6 mb-4">
+
+                <div class="card card-dashboard">
+
+                    <div class="card-body d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted">
+                                Transaksi Pending
+                            </h6>
+
+                            <h2 class="fw-bold text-danger">
+                                {{ $totalPending }}
+                            </h2>
+
+                        </div>
+
+                        <div class="icon-box bg-red">
+
+                            <i class="fa-solid fa-clock"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- LUNAS -->
+
+            <div class="col-md-6 mb-4">
+
+                <div class="card card-dashboard">
+
+                    <div class="card-body d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h6 class="text-muted">
+                                Transaksi Lunas
+                            </h6>
+
+                            <h2 class="fw-bold text-primary">
+                                {{ $totalLunas }}
+                            </h2>
+
+                        </div>
+
+                        <div class="icon-box bg-purple">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
         <!-- TRANSAKSI TERBARU -->
@@ -357,6 +443,7 @@
                         <th>No Faktur</th>
                         <th>Tanggal</th>
                         <th>Total</th>
+                        <th>Status</th>
                     </tr>
 
                 </thead>
@@ -377,6 +464,24 @@
 
                         <td>
                             Rp {{ number_format($t->total) }}
+                        </td>
+
+                        <td>
+
+                            @if($t->status == 'pending')
+
+                                <span class="badge bg-warning">
+                                    Pending
+                                </span>
+
+                            @else
+
+                                <span class="badge bg-success">
+                                    Lunas
+                                </span>
+
+                            @endif
+
                         </td>
 
                     </tr>

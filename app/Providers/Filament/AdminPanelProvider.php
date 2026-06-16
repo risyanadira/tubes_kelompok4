@@ -18,6 +18,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+// 1. IMPORT HALAMAN JURNAL UMUM KAMU DI SINI
+use App\Filament\Pages\LaporanJurnal; // 👈 Ganti ke LaporanJurnal
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -30,17 +32,38 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            // tambahan untuk notifikasi di panel admin
             ->databaseNotifications()
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverResources(
+                in: app_path('Filament/Resources'),
+                for: 'App\\Filament\\Resources'
+            )
+            ->discoverPages(
+                in: app_path('Filament/Pages'),
+                for: 'App\\Filament\\Pages'
+            )
             ->pages([
-                Pages\Dashboard::class,
+            Pages\Dashboard::class,
+            \App\Filament\Pages\LaporanJurnal::class, // 👈 Coba tulis lengkap dengan App-nya begini biar aman dari salah import
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->discoverWidgets(
+                in: app_path('Filament/Widgets'),
+                for: 'App\\Filament\\Widgets'
+            )
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+
+                // Dashboard Statistik
+                \App\Filament\Widgets\DashboardStatCards::class,
+
+                // Grafik Pembayaran per Metode
+                \App\Filament\Widgets\TotalPembayaranChart::class,
+
+                // Grafik Penjualan per Menu
+                \App\Filament\Widgets\TotalPenjualanChart::class,
+
+                // Grafik Pendapatan per Bulan
+                \App\Filament\Widgets\PenjualanPerBulanChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,

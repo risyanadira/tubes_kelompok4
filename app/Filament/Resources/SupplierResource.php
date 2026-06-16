@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SupplierResource\Pages;
 use App\Models\Supplier;
+
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,66 +15,124 @@ class SupplierResource extends Resource
 {
     protected static ?string $model = Supplier::class;
 
+    // NAVIGATION
     protected static ?string $navigationIcon = 'heroicon-o-truck';
 
-    // tambahan buat grup masterdata
     protected static ?string $navigationGroup = 'Masterdata';
 
-    // ===== FORM: Tambah/Edit Supplier =====
+    protected static ?string $navigationLabel = 'Supplier';
+
+    /* -------------------------------------------------------------------------- */
+    /* FORM                                                                        */
+    /* -------------------------------------------------------------------------- */
+
+    /* -------------------------------------------------------------------------- */
+    /* FORM                                                                        */
+    /* -------------------------------------------------------------------------- */
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id_supplier')
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->label('ID Supplier'),
 
-                Forms\Components\TextInput::make('nama_supplier')
-                    ->required()
-                    ->label('Nama Supplier'),
+                Forms\Components\Section::make('Data Supplier')
+                    ->description('Silakan isi detail supplier di bawah ini.')
+                    ->schema([
 
-                Forms\Components\Textarea::make('alamat')
-                    ->label('Alamat'),
+                        Forms\Components\Grid::make(2)
+                            ->schema([
 
-                Forms\Components\TextInput::make('no_telp')
-                    ->label('No Telp'),
+                                Forms\Components\TextInput::make('id_supplier')
+                                    ->label('ID Supplier')
+                                    ->required()
+                                    ->unique(ignoreRecord: true)
+                                    ->placeholder('Contoh: SUP001'),
+
+                                Forms\Components\TextInput::make('nama_supplier')
+                                    ->label('Nama Supplier')
+                                    ->required()
+                                    ->placeholder('Contoh: Rizki'),
+
+                            ]),
+
+                        Forms\Components\TextInput::make('no_telp')
+                            ->label('Nomor Telepon')
+                            ->tel()
+                            ->prefix('+62')
+                            ->placeholder('8123456789'),
+
+                        Forms\Components\Textarea::make('alamat')
+                            ->label('Alamat Lengkap')
+                            ->rows(3)
+                            ->columnSpanFull(),
+
+                    ]),
+
             ]);
     }
 
-    // ===== TABLE: List Supplier =====
+    /* -------------------------------------------------------------------------- */
+    /* TABLE                                                                       */
+    /* -------------------------------------------------------------------------- */
+
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+
                 Tables\Columns\TextColumn::make('id_supplier')
-                    ->label('ID Supplier')
+                    ->label('ID')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->copyable(),
 
                 Tables\Columns\TextColumn::make('nama_supplier')
                     ->label('Nama Supplier')
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('alamat')
-                    ->label('Alamat'),
-
                 Tables\Columns\TextColumn::make('no_telp')
-                    ->label('No Telp'),
+                    ->label('Telepon')
+                    ->icon('heroicon-m-phone'),
+
+                Tables\Columns\TextColumn::make('alamat')
+                    ->label('Alamat')
+                    ->limit(40),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Tanggal Input')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
             ])
+
             ->filters([
                 //
             ])
+
             ->actions([
+
                 Tables\Actions\EditAction::make(),
+
+                Tables\Actions\DeleteAction::make(),
+
             ])
+
             ->bulkActions([
+
                 Tables\Actions\BulkActionGroup::make([
+
                     Tables\Actions\DeleteBulkAction::make(),
+
                 ]),
+
             ]);
     }
+
+    /* -------------------------------------------------------------------------- */
+    /* RELATIONS                                                                   */
+    /* -------------------------------------------------------------------------- */
 
     public static function getRelations(): array
     {
@@ -81,6 +140,10 @@ class SupplierResource extends Resource
             //
         ];
     }
+
+    /* -------------------------------------------------------------------------- */
+    /* PAGES                                                                       */
+    /* -------------------------------------------------------------------------- */
 
     public static function getPages(): array
     {

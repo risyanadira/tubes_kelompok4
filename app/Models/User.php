@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
 class User extends Authenticatable implements FilamentUser
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -35,9 +36,7 @@ class User extends Authenticatable implements FilamentUser
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
+     * Cast Attributes
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
@@ -45,10 +44,11 @@ class User extends Authenticatable implements FilamentUser
     ];
 
     /**
-     * Hak akses panel Filament
+     * Hak akses Filament
+     * Hanya user dengan group 'admin' yang bisa masuk ke panel
      */
     public function canAccessPanel(Panel $panel): bool
-{
-    return true;
-}
+    {
+        return $this->user_group === 'admin';
+    }
 }
