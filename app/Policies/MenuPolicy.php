@@ -59,7 +59,6 @@ class MenuPolicy
     public function restore(User $user, Menu $menu): bool
     {
         //
-        return true;
 
     }
 

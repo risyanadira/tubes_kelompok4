@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers; 
+namespace App\Http\Controllers; // Pastikan namespace ini ada di baris paling atas
 
 use App\Models\PenggunaanBB;
 use App\Models\Bahan_Baku;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-//membungkus fungsi store di dalam Class ini
+// Kamu harus membungkus fungsi store di dalam Class ini
 class PenggunaanBBController extends Controller
 {
     public function store(Request $request)

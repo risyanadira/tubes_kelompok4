@@ -12,7 +12,7 @@ class Karyawan extends Model
 {
     use HasFactory;
 
-    protected $table = 'Karyawan'; // Nama tabel eksplisit
+    protected $table = 'karyawan'; // Nama tabel eksplisit
 
     protected $guarded = [];
 

@@ -9,19 +9,22 @@ class Pembelian extends Model
 {
     use HasFactory;
 
-    // Pastikan nama tabelnya sudah benar menunjuk ke 'pembelian'
-    protected $table = 'pembelian'; 
+    protected $table = 'pembelian'; // Nama tabel di phpMyAdmin
 
-    // WAJIB daftarkan semua kolom yang bisa diisi dari form di sini:
     protected $fillable = [
-    'no_faktur', // Selesai! Sekarang siap dipakai untuk otomatisasi jurnal
-    'tanggal',
-    'supplier_id',
-    'total_harga',
-    'keterangan',
+        'tanggal',
+        'supplier_id',
+        'total_harga',
+        'keterangan',
     ];
 
-    // Relasi ke detail_pembelian
+    // Relasi: Pembelian ini milik satu Supplier
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id_supplier');
+    }
+
+    // Relasi: Satu Pembelian punya banyak Detail (barang)
     public function details()
     {
         return $this->hasMany(DetailPembelian::class, 'pembelian_id');

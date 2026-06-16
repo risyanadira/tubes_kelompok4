@@ -12,20 +12,19 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Karyawan;
 
 // tambahan untuk tombol unduh pdf
 use Filament\Tables\Actions\Action; //untuk dapat menggunakan action
-use Barryvdh\DomPDF\Facade\Pdf; // pakai DomPDF
+use Barryvdh\DomPDF\Facade\Pdf; // Kalau kamu pakai DomPDF
 use Illuminate\Support\Facades\Storage;
 
 class PenggunaanBBResource extends Resource
 {
     protected static ?string $model = PenggunaanBB::class;
+    // Tambahkan ini agar route-nya jelas dan tidak error "b-bs"
     protected static ?string $slug = 'penggunaan_bb';
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Transaksi';
-    protected static ?string $navigationLabel = 'Penggunaan';
 
     public static function form(Form $form): Form
 {
@@ -33,11 +32,6 @@ class PenggunaanBBResource extends Resource
         ->schema([
             Forms\Components\Card::make()
                 ->schema([
-                    Forms\Components\Select::make('nama_pegawai')
-                    ->label('Nama Pegawai')
-                    ->options(Karyawan::all()->pluck('nama_pegawai', 'nama_pegawai')) 
-                    ->searchable() 
-                    ->required(),
                     Forms\Components\TextInput::make('kode_penggunaan')
                         ->default(fn () => \App\Models\PenggunaanBB::getKodePenggunaan())
                         ->disabled()
@@ -103,12 +97,6 @@ public static function table(Table $table): Table
                         );
                     })
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

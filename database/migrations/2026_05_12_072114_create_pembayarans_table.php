@@ -16,7 +16,7 @@ return new class extends Migration
 
             // relasi ke penjualan
             $table->foreignId('penjualan_id')
-                ->constrained('penjualan')
+                ->constrained('penjualans')
                 ->onDelete('cascade');
 
             // metode pembayaran

@@ -9,18 +9,19 @@ class Supplier extends Model
 {
     use HasFactory;
 
-    // 1. ISI INI: Paksa Laravel membaca nama tabel tunggal sesuai di phpMyAdmin kamu
+<<<<<<< HEAD
     protected $table = 'supplier';
-
-    // 2. ISI INI: Tegaskan bahwa primary key-nya adalah id_supplier
     protected $primaryKey = 'id_supplier';
-
-    // 3. Karena id_supplier kamu berupa string/text (contoh: SUP001), tambahkan ini:
+    public $incrementing = false; // Karena pakai string (SUP001)
+=======
+    protected $table = 'suppliers';
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+>>>>>>> 1e493812c591d84e8c40eacbdad9e4eaa7474380
     protected $keyType = 'string';
-    public $incrementing = false; 
 
     protected $fillable = [
-        'id_supplier',
+        'id',
         'nama_supplier',
         'alamat',
         'no_telp',

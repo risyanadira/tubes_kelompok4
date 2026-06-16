@@ -10,13 +10,10 @@ class ListPembelians extends ListRecords
 {
     protected static string $resource = PembelianResource::class;
 
-    protected static ?string $title = 'Daftar Pembelian Bahan Baku';
-
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->label('Tambah Pembelian'),
+            Actions\CreateAction::make(),
         ];
     }
 }

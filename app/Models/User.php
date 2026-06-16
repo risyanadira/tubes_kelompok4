@@ -2,51 +2,41 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
+// Pastikan ada "implements FilamentUser"
+class User extends Authenticatable implements FilamentUser
+use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+// tambahan untuk membatasi akses panel user filament, hanya admin saja
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 
-class User extends Authenticatable implements FilamentUser
+// class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser // 1. Tambahkan implements
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    // ... kode lainnya ...
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Berikan nilai true agar bisa login
+        return true; 
     /**
-     * Mass Assignment
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'user_group',
-    ];
-
-    /**
-     * Hidden Attributes
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * Cast Attributes
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
-    /**
-     * Hak akses Filament
-     */
+    // tambahan method untuk membatasi akses hanya user group admin saja
     public function canAccessPanel(Panel $panel): bool
     {
-        // hanya admin yang bisa masuk filament
         return $this->user_group === 'admin';
     }
 }
