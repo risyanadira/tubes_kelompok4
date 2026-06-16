@@ -18,7 +18,7 @@ class PenggunaanBB extends Model
         return $this->belongsTo(Bahan_Baku::class, 'id_bahan_baku');
     }
 
-    // Fungsi untuk generate kode penggunaan otomatis (mirip Pembeli.php)
+    // Fungsi untuk generate kode penggunaan otomatis
     public static function getKodePenggunaan()
     {
         $sql = "SELECT IFNULL(MAX(kode_penggunaan), 'USE-00000') as kode_penggunaan FROM penggunaan_bb";

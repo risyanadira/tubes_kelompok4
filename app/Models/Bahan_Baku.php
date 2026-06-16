@@ -14,7 +14,7 @@ class Bahan_Baku extends Model
 
     protected $guarded = [];
 
-    protected $primaryKey = 'id_bahan_baku'; // Beritahu Laravel PK nya bukan 'id'
+    protected $primaryKey = 'id_bahan_baku'; // PK nya bukan 'id'
     public $incrementing = false;            // Karena PK nya string, bukan angka auto-increment
     protected $keyType = 'string';
 

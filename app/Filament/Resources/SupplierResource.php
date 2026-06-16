@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SupplierResource\Pages;
 use App\Models\Supplier;
+
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,27 +15,29 @@ class SupplierResource extends Resource
 {
     protected static ?string $model = Supplier::class;
 
-<<<<<<< HEAD
-    // Ikon diganti agar sama dengan Bahan Baku
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-=======
+    // NAVIGATION
     protected static ?string $navigationIcon = 'heroicon-o-truck';
 
-    // tambahan buat grup masterdata
     protected static ?string $navigationGroup = 'Masterdata';
->>>>>>> 1e493812c591d84e8c40eacbdad9e4eaa7474380
 
-    protected static ?string $navigationLabel = 'Master Supplier';
+    protected static ?string $navigationLabel = 'Supplier';
+
+    /* -------------------------------------------------------------------------- */
+    /* FORM                                                                        */
+    /* -------------------------------------------------------------------------- */
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+
                 Forms\Components\Section::make('Data Supplier')
                     ->description('Silakan isi detail supplier di bawah ini.')
                     ->schema([
+
                         Forms\Components\Grid::make(2)
                             ->schema([
+
                                 Forms\Components\TextInput::make('id_supplier')
                                     ->label('ID Supplier')
                                     ->required()
@@ -45,6 +48,7 @@ class SupplierResource extends Resource
                                     ->label('Nama Supplier')
                                     ->required()
                                     ->placeholder('Contoh: Rizki'),
+
                             ]),
 
                         Forms\Components\TextInput::make('no_telp')
@@ -57,14 +61,21 @@ class SupplierResource extends Resource
                             ->label('Alamat Lengkap')
                             ->rows(3)
                             ->columnSpanFull(),
-                    ])
+
+                    ]),
+
             ]);
     }
+
+    /* -------------------------------------------------------------------------- */
+    /* TABLE                                                                       */
+    /* -------------------------------------------------------------------------- */
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+
                 Tables\Columns\TextColumn::make('id_supplier')
                     ->label('ID')
                     ->sortable()
@@ -89,20 +100,35 @@ class SupplierResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
             ])
+
             ->filters([
                 //
             ])
+
             ->actions([
+
                 Tables\Actions\EditAction::make(),
+
                 Tables\Actions\DeleteAction::make(),
+
             ])
+
             ->bulkActions([
+
                 Tables\Actions\BulkActionGroup::make([
+
                     Tables\Actions\DeleteBulkAction::make(),
+
                 ]),
+
             ]);
     }
+
+    /* -------------------------------------------------------------------------- */
+    /* RELATIONS                                                                   */
+    /* -------------------------------------------------------------------------- */
 
     public static function getRelations(): array
     {
@@ -110,6 +136,10 @@ class SupplierResource extends Resource
             //
         ];
     }
+
+    /* -------------------------------------------------------------------------- */
+    /* PAGES                                                                       */
+    /* -------------------------------------------------------------------------- */
 
     public static function getPages(): array
     {
