@@ -41,7 +41,7 @@ class PenjualanResource extends Resource
 
     protected static ?string $navigationGroup = 'Transaksi';
 
-    protected static ?string $navigationLabel = 'Penjualan POS';
+    protected static ?string $navigationLabel = 'Penjualan';
 
     public static function form(Form $form): Form
     {
@@ -162,7 +162,7 @@ class PenjualanResource extends Resource
                     ->schema([
 
                         Placeholder::make('info')
-                            ->content('Pilih metode pembayaran dan simpan transaksi.'),
+                            ->content('Periksa kembali pesanan sebelum simpan transaksi.'),
 
                         TextInput::make('total')
                             ->numeric()
@@ -200,9 +200,6 @@ class PenjualanResource extends Resource
 
                 TextColumn::make('karyawan.nama_pegawai')
                     ->label('Kasir'),
-
-                TextColumn::make('metode_pembayaran')
-                    ->label('Metode'),
 
                 TextColumn::make('total')
                     ->money('IDR'),

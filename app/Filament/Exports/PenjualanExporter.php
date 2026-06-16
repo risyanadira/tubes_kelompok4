@@ -14,11 +14,34 @@ class PenjualanExporter extends Exporter
     public static function getColumns(): array
     {
         return [
-            ExportColumn::make('no_faktur'),
-            ExportColumn::make('tgl'),
-            ExportColumn::make('karyawan.nama_pegawai')->label('Kasir'),
+            ExportColumn::make('no_faktur')
+                ->label('No Faktur'),
+
+            ExportColumn::make('tgl')
+                ->label('Tanggal'),
+
+            ExportColumn::make('karyawan.nama_pegawai')
+                ->label('Kasir'),
+
             ExportColumn::make('status'),
-            ExportColumn::make('total'),
+
+            ExportColumn::make('detail_penjualan')
+                ->label('Detail Penjualan')
+                ->state(function ($record) {
+
+                    return $record->detail
+                        ->map(function ($item) {
+
+                            $namaMenu = $item->menu->nama_menu ?? '-';
+                            $qty = $item->qty ?? 0;
+
+                            return "{$namaMenu} ({$qty})";
+                        })
+                        ->implode(', ');
+                }),
+
+            ExportColumn::make('total')
+                ->label('Total'),
         ];
     }
 
