@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('penjualan', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('karyawan_id')->constrained('karyawan');
+
+            $table->foreignId('karyawan_id')
+                ->constrained('karyawans');
+
             $table->string('no_faktur');
             $table->date('tgl');
             $table->decimal('total', 12, 2);
             $table->string('status')->default('pending');
+
             $table->timestamps();
         });
     }

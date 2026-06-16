@@ -10,18 +10,25 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\PDFController;
 
-
 /* LOGIN */
 Route::get('/', [AuthController::class, 'showLoginForm']);
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])
+    ->name('login');
+
 Route::post('/login', [AuthController::class, 'login']);
 
 /* LOGOUT */
 Route::get('/logout', function () {
+
     Auth::logout();
+
     request()->session()->invalidate();
+
     request()->session()->regenerateToken();
+
     return redirect('/login');
+
 })->name('logout');
 
 /* DASHBOARD */
@@ -33,34 +40,24 @@ Route::resource('coa', CoaController::class);
 
 /* PENJUALAN */
 Route::get('/penjualan', [PenjualanController::class, 'index']);
+
 Route::post('/penjualan/tambah/{id}', [PenjualanController::class, 'tambah']);
+
 Route::post('/penjualan/simpan', [PenjualanController::class, 'simpan']);
+
 Route::get('/penjualan/nota/{id}', [PenjualanController::class, 'nota']);
 
-/* MIDTRANS (optional) */
-Route::post('/midtrans/token', [MidtransController::class, 'token']);
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::resource('coa', CoaController::class);
-/* PDF */
-Route::get('/contohpdf', [PDFController::class, 'contohpdf']);
-
 Route::get('/pembayaran/{id}', [PenjualanController::class, 'bayar']);
+
+/* MIDTRANS */
+Route::post('/midtrans/token', [MidtransController::class, 'token']);
 
 Route::get('/midtrans/{id}', [MidtransController::class, 'bayar']);
 
 Route::get('/pembayaran-success/{id}', [MidtransController::class, 'success']);
+
+/* PDF */
+Route::get('/contohpdf', [PDFController::class, 'contohpdf']);
+
+/* UNTUK HAPUS ITEM DI KERANJANG */
+Route::get('/penjualan/hapus/{id}', [PenjualanController::class, 'hapus']);

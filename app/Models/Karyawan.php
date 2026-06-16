@@ -12,7 +12,7 @@ class Karyawan extends Model
 {
     use HasFactory;
 
-    protected $table = 'karyawan'; // Nama tabel eksplisit
+    protected $table = 'karyawans';
 
     protected $guarded = [];
 
@@ -20,17 +20,22 @@ class Karyawan extends Model
     {
         // query kode perusahaan
         $sql = "SELECT IFNULL(MAX(kode_pegawai), 'PG000') as kode_pegawai 
-                FROM karyawan ";
+                FROM karyawans";
+
         $kodepegawai = DB::select($sql);
 
         // cacah hasilnya
         foreach ($kodepegawai as $kdpgw) {
             $kd = $kdpgw->kode_pegawai;
         }
-        // Mengambil substring tiga digit akhir dari string PG-000
-        $noawal = substr($kd,-3);
-        $noakhir = $noawal+1; //menambahkan 1, hasilnya adalah integer cth 1
-        $noakhir = 'PG'.str_pad($noakhir,3,"0",STR_PAD_LEFT); //menyambung dengan string PG-001
+
+        // Mengambil substring tiga digit akhir
+        $noawal = substr($kd, -3);
+
+        $noakhir = $noawal + 1;
+
+        $noakhir = 'PG' . str_pad($noakhir, 3, "0", STR_PAD_LEFT);
+
         return $noakhir;
     }
 }

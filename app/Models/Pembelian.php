@@ -21,7 +21,7 @@ class Pembelian extends Model
     // Relasi: Pembelian ini milik satu Supplier
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class, 'supplier_id', 'id_supplier');
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
     }
 
     // Relasi: Satu Pembelian punya banyak Detail (barang)
