@@ -71,6 +71,13 @@ class PenjualanResource extends Resource
                                     ->searchable()
                                     ->required(),
 
+                                Select::make('status')
+                                    ->options([
+                                        'pending' => 'Pending',
+                                        'lunas' => 'Lunas',
+                                    ])
+                                    ->default('pending')
+                                    ->required(),
 
                             ])
                             ->columns(2),
@@ -162,13 +169,12 @@ class PenjualanResource extends Resource
                             ->prefix('Rp')
                             ->readonly(),
 
-                    
-                        Select::make('status')
+                        Select::make('metode_pembayaran')
                             ->options([
-                                'pending' => 'Pending',
-                                'lunas' => 'Lunas',
-                                ])
-                            ->default('pending')
+                                'cash' => 'Cash',
+                                'transfer' => 'Transfer',
+                                'qris' => 'QRIS',
+                            ])
                             ->required(),
 
                     ]),
@@ -210,17 +216,17 @@ class PenjualanResource extends Resource
 
             ->actions([
 
-                // Tables\Actions\Action::make('bayar')
-                //     ->label('Bayar')
-                //     ->icon('heroicon-o-credit-card')
-                //     ->color('success')
-                //     ->url(fn ($record) => route(
-                //         'filament.admin.resources.pembayarans.create',
-                //         [
-                //             'penjualan_id' => $record->id,
-                //         ]
-                //     ))
-                //     ->visible(fn ($record) => $record->status === 'pending'),
+                Tables\Actions\Action::make('bayar')
+                    ->label('Bayar')
+                    ->icon('heroicon-o-credit-card')
+                    ->color('success')
+                    ->url(fn ($record) => route(
+                        'filament.admin.resources.pembayarans.create',
+                        [
+                            'penjualan_id' => $record->id,
+                        ]
+                    ))
+                    ->visible(fn ($record) => $record->status === 'pending'),
 
                 Tables\Actions\ViewAction::make(),
 

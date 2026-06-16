@@ -10,6 +10,7 @@ class ListSuppliers extends ListRecords
 {
     protected static string $resource = SupplierResource::class;
 
+    // Menampilkan tombol "New Supplier" di pojok kanan atas tabel
     protected function getHeaderActions(): array
     {
         return [

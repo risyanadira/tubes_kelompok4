@@ -15,21 +15,36 @@ class PenjualanController extends Controller
     | HALAMAN KASIR
     |-----------------------------------------
     */
-    public function index()
-    {
-        $menu = Menu::all();
+        public function index()
+        {
+            $menu = Menu::all();
 
-        $karyawan = Karyawan::all();
+            $karyawan = Karyawan::all();
 
-        // RIWAYAT TRANSAKSI
-        $penjualan = Penjualan::latest()->get();
+            $penjualan = Penjualan::latest()->get();
 
-        return view('penjualan.index', compact(
-            'menu',
-            'karyawan',
-            'penjualan'
-        ));
-    }
+            // menu yg ada di keranjang
+            $cartIds = [];
+
+            if (session('cart')) {
+
+                foreach (session('cart') as $id => $item) {
+                    $cartIds[] = $id;
+                }
+            }
+
+            // rekomendasi
+                $rekomendasi = Menu::inRandomOrder()
+                    ->limit(3)
+                    ->get();
+
+            return view('penjualan.index', compact(
+                'menu',
+                'karyawan',
+                'penjualan',
+                'rekomendasi'
+            ));
+        }
 
     /*
     |-----------------------------------------
@@ -152,5 +167,22 @@ class PenjualanController extends Controller
 
         return redirect('/penjualan')
             ->with('success', 'Pembayaran berhasil');
+    }
+        /*
+    |-----------------------------------------
+    | UNTUK HAPUS ITEM DI KERANJANG
+    |-----------------------------------------
+    */
+    public function hapus($id)
+    {
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+        }
+
+        session()->put('cart', $cart);
+
+        return redirect('/penjualan');
     }
 }

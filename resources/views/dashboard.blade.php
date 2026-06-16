@@ -29,12 +29,19 @@
             display: flex;
             flex-direction: column;
         }
-
         .logo{
             color: white;
             font-size: 26px;
             font-weight: bold;
             margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .logo img{
+            width: 80px;
+            height: auto;
+            border-radius: 12px;
+
         }
 
         .sidebar-menu a{
@@ -166,9 +173,16 @@
 
         <div>
 
-            <div class="logo">
-                <i class="fa-solid fa-bowl-food"></i>
-                Baso Jafra
+            <div class="logo text-center">
+
+                <img src="{{ asset('logo.png') }}"
+                    alt="Logo Baso Jafra"
+                    style="width:80px; height:auto; margin-bottom:10px;">
+
+                <div>
+                    Baso Jafra
+                </div>
+
             </div>
 
             <div class="sidebar-menu">

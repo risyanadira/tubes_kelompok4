@@ -71,6 +71,7 @@ class UserResource extends Resource
                         ->options([
                             'admin' => 'admin',
                             'owner' => 'owner',
+                            'kasir' => 'kasir',
                         ])
                         ->default('owner')
             ]);

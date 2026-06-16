@@ -59,3 +59,5 @@ Route::get('/pembayaran-success/{id}', [MidtransController::class, 'success']);
 /* PDF */
 Route::get('/contohpdf', [PDFController::class, 'contohpdf']);
 
+/* UNTUK HAPUS ITEM DI KERANJANG */
+Route::get('/penjualan/hapus/{id}', [PenjualanController::class, 'hapus']);

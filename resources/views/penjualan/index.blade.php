@@ -30,6 +30,19 @@
             flex-direction:column;
             color:white;
         }
+        .logo{
+            color: white;
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .logo img{
+            width: 80px;
+            height: auto;
+            border-radius: 12px;
+        }
 
         .logo{
             color:white;
@@ -115,10 +128,15 @@
 
         <div class="logo text-center">
 
-    <img src="{{ asset('/logo.png') }}"
-         alt="Logo Baso Jafra"
-         width="120"
-         class="mb-2">
+            <img src="{{ asset('/logo.png') }}"
+                alt="Logo Baso Jafra"
+                width="120"
+                class="mb-2">
+
+            <div class="fw-bold text-white">
+                Baso Jafra
+            </div>
+
         </div>
 
         <div class="sidebar-menu">
@@ -248,30 +266,49 @@
 
                     @if(session('cart'))
 
-                        @foreach(session('cart') as $item)
+                        @foreach(session('cart') as $id => $item)
 
                         @php $total += $item['subtotal']; @endphp
 
-                        <tr>
+                    <tr>
 
-                            <td>
+                        <td width="100%">
 
-                                <b>{{ $item['nama_menu'] }}</b>
+                            <div class="d-flex justify-content-between align-items-start">
 
-                                <br>
+                                <div>
 
-                                <small>
-                                    {{ $item['qty'] }} x
-                                    {{ number_format($item['harga']) }}
-                                </small>
+                                    <b>{{ $item['nama_menu'] }}</b>
 
-                            </td>
+                                    <br>
 
-                            <td class="text-end">
+                                    <small>
+                                        {{ $item['qty'] }} x {{ number_format($item['harga']) }}
+                                    </small>
 
-                                Rp {{ number_format($item['subtotal']) }}
+                                </div>
 
-                            </td>
+                                <div class="d-flex align-items-center">
+
+                                    <span class="me-3">
+                                        Rp {{ number_format($item['subtotal']) }}
+                                    </span>
+
+                                    <a href="/penjualan/hapus/{{ $id }}"
+                                    class="text-danger">
+
+                                        <i class="fa fa-trash"></i>
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
 
                         </tr>
 
@@ -308,6 +345,62 @@
             </div>
 
             <!-- CHECKOUT -->
+            @if(session('cart')) 
+            <div class="card card-box p-3 mt-3">
+
+                <h5 class="fw-bold mb-3">
+                
+                        <h5 class="fw-bold mb-3">
+                🍜 Rekomendasi Menu
+            </h5>
+
+            @forelse($rekomendasi as $r)
+            
+            <div class="card mb-2">
+
+                @if($r->foto)
+                    <img src="{{ asset('storage/' . $r->foto) }}"
+                        class="card-img-top"
+                        style="height:120px; object-fit:cover;">
+                @endif
+
+                <div class="card-body text-center">
+
+                    <b>{{ $r->nama_menu }}</b>
+
+                    <br>
+
+                    <span class="text-primary">
+                        Rp {{ number_format($r->harga) }}
+                    </span>
+
+                    <form action="/penjualan/tambah/{{ $r->id }}" method="POST" class="mt-2">
+
+                        @csrf
+
+                        <button type="submit" class="btn btn-success btn-sm w-100">
+
+                            <i class="fa fa-plus"></i>
+                            Tambah
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            @empty
+
+            <p class="text-muted">
+                Tidak ada rekomendasi
+            </p>
+
+            @endforelse
+
+            </div>
+            @endif
 
             <div class="card card-box p-3 mt-3">
 
