@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
 {
-    if (!Schema::hasTable('penggajians')) {
+    if (!Schema::hasTable('penggajian')) {
         Schema::create('penggajians', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('karyawan_id')->constrained('karyawans');
+            $table->foreignId('karyawan_id')->constrained('karyawan');
             $table->date('tanggal_gaji');
             $table->integer('total_gaji')->default(0);
             $table->timestamps();
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('penggajians');
+        Schema::dropIfExists('penggajian');
     }
 };

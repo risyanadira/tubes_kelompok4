@@ -16,10 +16,11 @@ class PembayaranResource extends Resource
 {
     protected static ?string $model = Pembayaran::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
-
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    
     // group menu sidebar
     protected static ?string $navigationGroup = 'Transaksi';
+    protected static ?string $navigationLabel = 'Pembayaran';
 
     public static function form(Form $form): Form
     {
