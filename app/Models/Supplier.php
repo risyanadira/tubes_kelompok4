@@ -9,19 +9,20 @@ class Supplier extends Model
 {
     use HasFactory;
 
-<<<<<<< HEAD
+    // Pakai nama tabel 'supplier' sesuai migration kita di Step 1
     protected $table = 'supplier';
+
+    // Primary key custom sesuai Step 2
     protected $primaryKey = 'id_supplier';
-    public $incrementing = false; // Karena pakai string (SUP001)
-=======
-    protected $table = 'suppliers';
-    protected $primaryKey = 'id';
+
+    // Wajib false karena kita pakai string 'SUP001', bukan angka otomatis
     public $incrementing = false;
->>>>>>> 1e493812c591d84e8c40eacbdad9e4eaa7474380
+
+    // Tipe datanya string
     protected $keyType = 'string';
 
     protected $fillable = [
-        'id',
+        'id_supplier',
         'nama_supplier',
         'alamat',
         'no_telp',

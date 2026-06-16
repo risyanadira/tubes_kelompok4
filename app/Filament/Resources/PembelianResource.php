@@ -9,14 +9,16 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\Repeater;
+// Import fitur Export
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class PembelianResource extends Resource
 {
     protected static ?string $model = Pembelian::class;
 
-    // Ikon diubah agar seragam dengan Bahan Baku dan Master Supplier
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static ?string $navigationGroup = 'Transaksi';
     protected static ?string $navigationLabel = 'Transaksi Pembelian';
 
     public static function form(Form $form): Form
@@ -38,11 +40,20 @@ class PembelianResource extends Resource
                             ->preload()
                             ->required(),
                         
+                        // Field Total Harga Otomatis
+                        Forms\Components\TextInput::make('total_harga')
+                            ->label('Total Bayar Keseluruhan')
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->readOnly()
+                            ->id('total_harga_input')
+                            ->helperText('Otomatis terjumlah dari rincian barang di bawah.'),
+
                         Forms\Components\Textarea::make('keterangan')
                             ->label('Keterangan Nota')
-                            ->placeholder('Contoh: Pembelian bahan baku daging')
+                            ->placeholder('Contoh: Belanja mingguan bahan baku bakso')
                             ->columnSpanFull(),
-                    ])->columns(2),
+                    ])->columns(3),
 
                 // --- SECTION BAWAH (Detail Barang - Repeater) ---
                 Forms\Components\Section::make('Rincian Barang / Bahan Baku')
@@ -51,9 +62,8 @@ class PembelianResource extends Resource
                             ->relationship()
                             ->schema([
                                 Forms\Components\TextInput::make('nama_barang')
-                                    ->label('Nama Bahan Baku')
-                                    ->required()
-                                    ->placeholder('Contoh: Daging Sapi / Ayam'),
+                                    ->label('Nama Barang')
+                                    ->required(),
 
                                 Forms\Components\TextInput::make('qty')
                                     ->label('Jumlah (Qty)')
@@ -61,8 +71,11 @@ class PembelianResource extends Resource
                                     ->required()
                                     ->default(1)
                                     ->reactive()
-                                    ->afterStateUpdated(fn ($state, $set, $get) => 
-                                        $set('subtotal', (int)$state * (int)$get('harga'))),
+                                    ->afterStateUpdated(function ($state, $set, $get) {
+                                        $subtotal = (int)$state * (int)$get('harga');
+                                        $set('subtotal', $subtotal);
+                                        static::updateTotalHarga($get, $set);
+                                    }),
 
                                 Forms\Components\TextInput::make('harga')
                                     ->label('Harga Satuan')
@@ -70,8 +83,11 @@ class PembelianResource extends Resource
                                     ->required()
                                     ->prefix('Rp')
                                     ->reactive()
-                                    ->afterStateUpdated(fn ($state, $set, $get) => 
-                                        $set('subtotal', (int)$state * (int)$get('qty'))),
+                                    ->afterStateUpdated(function ($state, $set, $get) {
+                                        $subtotal = (int)$state * (int)$get('qty');
+                                        $set('subtotal', $subtotal);
+                                        static::updateTotalHarga($get, $set);
+                                    }),
 
                                 Forms\Components\TextInput::make('subtotal')
                                     ->label('Subtotal')
@@ -81,11 +97,22 @@ class PembelianResource extends Resource
                                     ->dehydrated(),
                             ])
                             ->columns(4)
-                            ->itemLabel(fn (array $state): ?string => $state['nama_barang'] ?? null)
+                            ->itemLabel(fn (array $state): ?string => $state['nama_barang'] ?? 'Barang Baru')
                             ->collapsible()
+                            // Update total harga jika item dihapus
+                            ->afterStateUpdated(fn ($get, $set) => static::updateTotalHarga($get, $set))
                             ->defaultItems(1),
                     ]),
             ]);
+    }
+
+    // FUNGSI LOGIKA: Menjumlahkan semua subtotal di dalam repeater ke total_harga utama
+    public static function updateTotalHarga($get, $set)
+    {
+        $selectedDetails = collect($get('details'))->filter(fn($item) => !empty($item['subtotal']));
+        $total = $selectedDetails->reduce(fn($total, $item) => $total + (int)$item['subtotal'], 0);
+        
+        $set('total_harga', $total);
     }
 
     public static function table(Table $table): Table
@@ -94,30 +121,29 @@ class PembelianResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('tanggal')
                     ->label('Tanggal')
-                    ->date()
+                    ->date('d M Y')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('supplier.nama_supplier')
                     ->label('Supplier')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('details_count')
-                    ->label('Jenis Barang')
-                    ->counts('details'),
+                    ->label('Item')
+                    ->counts('details')
+                    ->suffix(' Jenis'),
 
                 Tables\Columns\TextColumn::make('total_harga')
                     ->label('Total Bayar')
                     ->money('IDR')
-                    ->sortable(),
+                    ->sortable()
+                    ->color('success')
+                    ->weight('bold'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->label('Input Pada')
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -125,16 +151,14 @@ class PembelianResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    // Tambahkan Tombol Export Excel di sini
+                    ExportBulkAction::make()
+                        ->label('Export ke Excel')
+                        ->icon('heroicon-o-arrow-down-tray'),
+                    
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array
