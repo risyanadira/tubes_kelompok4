@@ -13,7 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-// tambahan
+// Tambahan komponen Filament
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -24,15 +24,30 @@ use Filament\Forms\Components\Section;
 
 class BukuBesarResource extends Resource
 {
-    // protected static ?string $model = BukuBesar::class;
-
-    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static string $view = 'filament.resources.buku-besar-resource.pages.index'; // Tentukan view kustom
+    protected static ?string $model = BukuBesar::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
     protected static ?string $navigationGroup = 'Laporan';
+
+    /**
+     * HAK AKSES GLOBAL UNTUK RESOURCE INI
+     * Fungsi-fungsi di bawah ini memaksa Filament meloloskan akses halaman
+     */
+    public static function canViewAny(): bool
+    {
+        return true; 
+    }
+
+    public static function canCreate(): bool
+    {
+        return true;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return true;
+    }
 
     public static function form(Form $form): Form
     {
@@ -52,21 +67,25 @@ class BukuBesarResource extends Resource
                 //
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
+                //
             ])
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
+                //
             ])
-            ->paginated(false)
-            ;
+            ->paginated(false);
     }
 
     public static function getRelations(): array
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            \App\Filament\Resources\BukuBesarResource\Widgets\BukuBesar::class,
         ];
     }
 

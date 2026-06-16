@@ -9,17 +9,21 @@ class JurnalDetail extends Model
 {
     use HasFactory;
 
-    protected $table = 'jurnal_detail'; // Nama tabel eksplisit
+    protected $table = 'jurnal_detail'; 
 
     protected $guarded = [];
 
-    // relasi ke tabel jurnal
+    // Paksa konversi string database menjadi angka desimal/float agar sum() bekerja
+    protected $casts = [
+        'debit' => 'float',
+        'credit' => 'float',
+    ];
+
     public function jurnal()
     {
-        return $this->belongsTo(Jurnal::class);
+        return $this->belongsTo(Jurnal::class, 'jurnal_id');
     }
 
-    // relasi ke tabel coa
     public function coa()
     {
         return $this->belongsTo(Coa::class);
