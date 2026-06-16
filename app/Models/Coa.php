@@ -8,9 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Coa extends Model
 {
     use HasFactory;
-
+    // karena kita merubah tabelnya dari coas menjadi coa
     protected $table = 'coas';
 
-    // Tambahkan baris ini agar semua field bisa disimpan
-    protected $guarded = []; 
+    // seluruh kolom dapat dimodifikasi
+    protected $guarded = [];
+
+    // relasi 1-n dengan jurnal_detail
+    public function journalDetail()
+    {
+        return $this->hasMany(JurnalDetail::class);
+    }
 }

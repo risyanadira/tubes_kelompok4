@@ -18,6 +18,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+// 1. IMPORT HALAMAN JURNAL UMUM KAMU DI SINI
+use App\Filament\Pages\LaporanJurnal; // 👈 Ganti ke LaporanJurnal
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -40,7 +42,8 @@ class AdminPanelProvider extends PanelProvider
                 for: 'App\\Filament\\Pages'
             )
             ->pages([
-                Pages\Dashboard::class,
+            Pages\Dashboard::class,
+            \App\Filament\Pages\LaporanJurnal::class, // 👈 Coba tulis lengkap dengan App-nya begini biar aman dari salah import
             ])
             ->discoverWidgets(
                 in: app_path('Filament/Widgets'),

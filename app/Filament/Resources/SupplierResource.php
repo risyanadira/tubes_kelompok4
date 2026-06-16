@@ -20,7 +20,11 @@ class SupplierResource extends Resource
 
     protected static ?string $navigationGroup = 'Masterdata';
 
-    protected static ?string $navigationLabel = 'Master Supplier';
+    protected static ?string $navigationLabel = 'Supplier';
+
+    /* -------------------------------------------------------------------------- */
+    /* FORM                                                                        */
+    /* -------------------------------------------------------------------------- */
 
     /* -------------------------------------------------------------------------- */
     /* FORM                                                                        */
@@ -38,7 +42,7 @@ class SupplierResource extends Resource
                         Forms\Components\Grid::make(2)
                             ->schema([
 
-                                Forms\Components\TextInput::make('id')
+                                Forms\Components\TextInput::make('id_supplier')
                                     ->label('ID Supplier')
                                     ->required()
                                     ->unique(ignoreRecord: true)
@@ -76,7 +80,7 @@ class SupplierResource extends Resource
         return $table
             ->columns([
 
-                Tables\Columns\TextColumn::make('id')
+                Tables\Columns\TextColumn::make('id_supplier')
                     ->label('ID')
                     ->sortable()
                     ->searchable()
