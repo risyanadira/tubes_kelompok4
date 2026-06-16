@@ -6,6 +6,7 @@ use App\Filament\Resources\PenjualanResource\Pages;
 use App\Models\Penjualan;
 use App\Models\Menu;
 use App\Models\Karyawan;
+
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -19,22 +20,28 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Placeholder;
+
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 
 use Filament\Tables\Columns\TextColumn;
+
+use Filament\Tables\Actions\ExportAction;
+use Filament\Tables\Actions\ExportBulkAction;
+use Filament\Tables\Actions\Action;
+
+use App\Filament\Exports\PenjualanExporter;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PenjualanResource extends Resource
 {
     protected static ?string $model = Penjualan::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
-    protected static ?string $navigationGroup = 'Transaksi';
-    protected static ?string $navigationLabel = 'Penjualan POS';
 
-    /* -------------------------------------------------------------------------- */
-    /* FORM                                                                       */
-    /* -------------------------------------------------------------------------- */
+    protected static ?string $navigationGroup = 'Transaksi';
+
+    protected static ?string $navigationLabel = 'Penjualan POS';
 
     public static function form(Form $form): Form
     {
@@ -42,7 +49,7 @@ class PenjualanResource extends Resource
 
             Wizard::make([
 
-                /* ================= STEP 1 ================= */
+                // STEP 1
                 Wizard\Step::make('Informasi')
                     ->schema([
 
@@ -63,11 +70,21 @@ class PenjualanResource extends Resource
                                     ->options(Karyawan::pluck('nama_pegawai', 'id'))
                                     ->searchable()
                                     ->required(),
+
+                                Select::make('status')
+                                    ->options([
+                                        'pending' => 'Pending',
+                                        'lunas' => 'Lunas',
+                                    ])
+                                    ->default('pending')
+                                    ->required(),
+
                             ])
                             ->columns(2),
+
                     ]),
 
-                /* ================= STEP 2 ================= */
+                // STEP 2
                 Wizard\Step::make('Menu')
                     ->schema([
 
@@ -85,9 +102,11 @@ class PenjualanResource extends Resource
                                         $menu = Menu::find($state);
 
                                         if ($menu) {
+
                                             $qty = (int) ($get('qty') ?? 1);
 
                                             $set('harga', $menu->harga);
+
                                             $set('subtotal', $menu->harga * $qty);
 
                                             $items = $get('../../detail') ?? [];
@@ -112,6 +131,7 @@ class PenjualanResource extends Resource
                                     ->afterStateUpdated(function ($state, Get $get, Set $set) {
 
                                         $harga = (int) ($get('harga') ?? 0);
+
                                         $subtotal = $harga * (int) $state;
 
                                         $set('subtotal', $subtotal);
@@ -137,7 +157,7 @@ class PenjualanResource extends Resource
 
                     ]),
 
-                /* ================= STEP 3 ================= */
+                // STEP 3
                 Wizard\Step::make('Pembayaran')
                     ->schema([
 
@@ -147,11 +167,9 @@ class PenjualanResource extends Resource
                         TextInput::make('total')
                             ->numeric()
                             ->prefix('Rp')
-                            ->readonly()
-                            ->default(0),
+                            ->readonly(),
 
                         Select::make('metode_pembayaran')
-                            ->label('Metode Pembayaran')
                             ->options([
                                 'cash' => 'Cash',
                                 'transfer' => 'Transfer',
@@ -159,58 +177,103 @@ class PenjualanResource extends Resource
                             ])
                             ->required(),
 
-                        Select::make('status')
-                            ->options([
-                                'pending' => 'Pending',
-                                'lunas' => 'Lunas',
-                            ])
-                            ->default('lunas')
-                            ->required(),
-
                     ]),
+
             ])->columnSpanFull(),
+
         ]);
     }
-
-    /* -------------------------------------------------------------------------- */
-    /* TABLE                                                                      */
-    /* -------------------------------------------------------------------------- */
 
     public static function table(Table $table): Table
     {
-        return $table->columns([
+        return $table
 
-            TextColumn::make('no_faktur')->searchable(),
+            ->columns([
 
-            TextColumn::make('tgl')->date(),
+                TextColumn::make('no_faktur')
+                    ->label('No Faktur')
+                    ->searchable(),
 
-            TextColumn::make('karyawan.nama_pegawai')->label('Kasir'),
+                TextColumn::make('tgl')
+                    ->label('Tanggal')
+                    ->date(),
 
-            TextColumn::make('metode_pembayaran')->label('Metode'),
+                TextColumn::make('karyawan.nama_pegawai')
+                    ->label('Kasir'),
 
-            TextColumn::make('total')->money('IDR'),
+                TextColumn::make('metode_pembayaran')
+                    ->label('Metode'),
 
-            TextColumn::make('status')
-                ->badge()
-                ->color(fn ($state) => match ($state) {
-                    'lunas' => 'success',
-                    'pending' => 'warning',
-                    default => 'gray',
-                }),
-        ])
-        ->actions([
-            Tables\Actions\ViewAction::make(),
-            Tables\Actions\EditAction::make(),
-            Tables\Actions\DeleteAction::make(),
-        ])
-        ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
-        ]);
+                TextColumn::make('total')
+                    ->money('IDR'),
+
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn ($state) => match ($state) {
+                        'lunas' => 'success',
+                        'pending' => 'warning',
+                        default => 'gray',
+                    }),
+
+            ])
+
+            ->actions([
+
+                Tables\Actions\Action::make('bayar')
+                    ->label('Bayar')
+                    ->icon('heroicon-o-credit-card')
+                    ->color('success')
+                    ->url(fn ($record) => route(
+                        'filament.admin.resources.pembayarans.create',
+                        [
+                            'penjualan_id' => $record->id,
+                        ]
+                    ))
+                    ->visible(fn ($record) => $record->status === 'pending'),
+
+                Tables\Actions\ViewAction::make(),
+
+                Tables\Actions\EditAction::make(),
+
+                Tables\Actions\DeleteAction::make(),
+
+            ])
+
+            ->headerActions([
+
+                ExportAction::make()
+                    ->exporter(PenjualanExporter::class)
+                    ->color('success'),
+
+                Action::make('downloadPdf')
+                    ->label('Unduh PDF Laporan')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('danger')
+                    ->action(function () {
+
+                        $penjualan = Penjualan::with('karyawan', 'detail.menu')->get();
+
+                        $pdf = Pdf::loadView('pdf.penjualan', [
+                            'penjualan' => $penjualan
+                        ]);
+
+                        return response()->streamDownload(
+                            fn () => print($pdf->output()),
+                            'laporan-penjualan.pdf'
+                        );
+                    }),
+
+            ])
+
+            ->bulkActions([
+
+                Tables\Actions\DeleteBulkAction::make(),
+
+                ExportBulkAction::make()
+                    ->exporter(PenjualanExporter::class),
+
+            ]);
     }
-
-    /* -------------------------------------------------------------------------- */
-    /* PAGES                                                                      */
-    /* -------------------------------------------------------------------------- */
 
     public static function getPages(): array
     {

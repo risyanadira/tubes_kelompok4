@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DetailPembelian extends Model
 {
     use HasFactory;
 
-    protected $table = 'detail_pembelian'; // Nama tabel di phpMyAdmin
+    protected $table = 'detail_pembelian';
 
     protected $fillable = [
         'pembelian_id',
@@ -19,9 +20,8 @@ class DetailPembelian extends Model
         'subtotal',
     ];
 
-    // Relasi balik: Detail ini milik satu transaksi Pembelian
-    public function pembelian()
+    public function pembelian(): BelongsTo
     {
-        return $this->belongsTo(Pembelian::class, 'pembelian_id');
+        return $this->belongsTo(Pembelian::class, 'pembelian_id', 'id');
     }
 }

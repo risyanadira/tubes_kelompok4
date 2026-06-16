@@ -6,16 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        // 1. Tabel Utama: Pembelian
+        // 1. Tabel Induk: Pembelian (Menampung info supplier & tanggal)
         Schema::create('pembelian', function (Blueprint $table) {
             $table->id();
             $table->date('tanggal');
-            // Menghubungkan ke id_supplier di tabel supplier
+            // Menghubungkan ke id_supplier (String: SUP001) di tabel supplier
             $table->string('supplier_id'); 
             $table->decimal('total_harga', 15, 2)->default(0);
             $table->text('keterangan')->nullable();
@@ -25,7 +22,7 @@ return new class extends Migration
             $table->foreign('supplier_id')->references('id_supplier')->on('supplier')->onDelete('cascade');
         });
 
-        // 2. Tabel Detail: Detail Pembelian
+        // 2. Tabel Anak: Detail Pembelian (Menampung daftar barang yang dibeli)
         Schema::create('detail_pembelian', function (Blueprint $table) {
             $table->id();
             // Menghubungkan ke id di tabel pembelian
@@ -38,9 +35,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         // Hapus detail dulu baru induknya agar tidak error foreign key

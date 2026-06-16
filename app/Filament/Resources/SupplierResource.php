@@ -9,42 +9,48 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+// Library export
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class SupplierResource extends Resource
 {
     protected static ?string $model = Supplier::class;
 
-<<<<<<< HEAD
-    // Ikon diganti agar sama dengan Bahan Baku
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-=======
+    // NAVIGATION - Konfigurasi tampilan di Sidebar
     protected static ?string $navigationIcon = 'heroicon-o-truck';
-
-    // tambahan buat grup masterdata
     protected static ?string $navigationGroup = 'Masterdata';
->>>>>>> 1e493812c591d84e8c40eacbdad9e4eaa7474380
-
-    protected static ?string $navigationLabel = 'Master Supplier';
+    
+    // MENGHAPUS KATA "MASTER"
+    protected static ?string $navigationLabel = 'Supplier'; 
+    protected static ?string $pluralLabel = 'Supplier';
+    protected static ?string $slug = 'suppliers';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Section::make('Data Supplier')
-                    ->description('Silakan isi detail supplier di bawah ini.')
+                    ->description('Lengkapi informasi detail supplier di bawah ini.')
                     ->schema([
                         Forms\Components\Grid::make(2)
                             ->schema([
+                                // Fitur Auto-Numbering SUP001, SUP002, dst.
                                 Forms\Components\TextInput::make('id_supplier')
                                     ->label('ID Supplier')
                                     ->required()
-                                    ->unique(ignoreRecord: true)
-                                    ->placeholder('Contoh: SUP001'),
+                                    ->readOnly() 
+                                    ->default(function () {
+                                        $latest = \App\Models\Supplier::orderBy('created_at', 'desc')->first();
+                                        if (!$latest) return 'SUP001';
+                                        
+                                        $number = (int) str_replace('SUP', '', $latest->id_supplier) + 1;
+                                        return 'SUP' . str_pad($number, 3, '0', STR_PAD_LEFT);
+                                    }),
 
                                 Forms\Components\TextInput::make('nama_supplier')
                                     ->label('Nama Supplier')
                                     ->required()
-                                    ->placeholder('Contoh: Rizki'),
+                                    ->placeholder('Contoh: PT. Sumber Rejeki'),
                             ]),
 
                         Forms\Components\TextInput::make('no_telp')
@@ -55,9 +61,10 @@ class SupplierResource extends Resource
 
                         Forms\Components\Textarea::make('alamat')
                             ->label('Alamat Lengkap')
+                            ->placeholder('Alamat gudang atau kantor...')
                             ->rows(3)
                             ->columnSpanFull(),
-                    ])
+                    ]),
             ]);
     }
 
@@ -86,7 +93,7 @@ class SupplierResource extends Resource
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Input')
-                    ->dateTime()
+                    ->dateTime('d M Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -99,6 +106,11 @@ class SupplierResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    // Fitur Export Excel
+                    ExportBulkAction::make()
+                        ->label('Export ke Excel')
+                        ->icon('heroicon-o-arrow-down-tray'),
+                    
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
@@ -106,9 +118,7 @@ class SupplierResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
