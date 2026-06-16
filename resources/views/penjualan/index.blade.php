@@ -6,13 +6,14 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
 
         body{
             background:#f4f7fe;
-            font-family:Segoe UI;
+            font-family:'Segoe UI',sans-serif;
         }
 
         /* SIDEBAR */
@@ -24,22 +25,64 @@
             left:0;
             top:0;
             background:linear-gradient(180deg,#0d6efd,#084298);
-            padding:25px;
+            padding:25px 20px;
+            display:flex;
+            flex-direction:column;
             color:white;
         }
+        .logo{
+            color: white;
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-align: center;
+        }
 
-        .sidebar a{
+        .logo img{
+            width: 80px;
+            height: auto;
+            border-radius: 12px;
+        }
+
+        .sidebar-menu a{
+            display:block;
             color:white;
             text-decoration:none;
+            padding:14px 16px;
+            border-radius:12px;
+            margin-bottom:12px;
+            transition:0.3s;
+            font-size:16px;
+        }
+
+        .sidebar-menu a:hover,
+        .active-menu{
+            background:rgba(255,255,255,0.2);
+            transform:translateX(5px);
+        }
+
+        .sidebar-menu i{
+            margin-right:10px;
+        }
+
+        /* LOGOUT */
+
+        .logout{
+            margin-top:auto;
+        }
+
+        .logout a{
             display:block;
-            margin-bottom:10px;
-            padding:10px;
-            border-radius:10px;
+            color:white;
+            text-decoration:none;
+            padding:14px 16px;
+            border-radius:12px;
+            background:rgba(255,255,255,0.15);
             transition:0.3s;
         }
 
-        .sidebar a:hover{
-            background:rgba(255,255,255,0.2);
+        .logout a:hover{
+            background:rgba(255,255,255,0.25);
         }
 
         /* MAIN */
@@ -48,6 +91,8 @@
             margin-left:270px;
             padding:30px;
         }
+
+        /* CARD */
 
         .card-box{
             border:none;
@@ -64,100 +109,6 @@
         }
 
     </style>
-
-<meta charset="UTF-8">
-<title>POS Kasir - Baso Jafra</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-<style>
-
-body{
-    background: #f4f7fe;
-    font-family: 'Segoe UI', sans-serif;
-}
-
-/* SIDEBAR (SAMAIN DENGAN DASHBOARD) */
-.sidebar{
-    width: 250px;
-    height: 100vh;
-    background: linear-gradient(180deg, #0d6efd, #084298);
-    position: fixed;
-    left: 0;
-    top: 0;
-    padding: 25px 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-.logo{
-    color: white;
-    font-size: 26px;
-    font-weight: bold;
-    margin-bottom: 40px;
-}
-
-.sidebar-menu a{
-    display: block;
-    color: white;
-    text-decoration: none;
-    padding: 14px 16px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    transition: 0.3s;
-    font-size: 16px;
-}
-
-.sidebar-menu a:hover{
-    background: rgba(255,255,255,0.2);
-    transform: translateX(5px);
-}
-
-.sidebar-menu i{
-    margin-right: 10px;
-}
-
-/* LOGOUT DI BAWAH */
-.logout{
-    margin-top: auto;
-}
-
-.logout a{
-    display: block;
-    color: white;
-    text-decoration: none;
-    padding: 14px 16px;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.15);
-    transition: 0.3s;
-}
-
-.logout a:hover{
-    background: rgba(255,255,255,0.25);
-}
-
-/* MAIN */
-.main{
-    margin-left: 270px;
-    padding: 30px;
-}
-
-/* CARD */
-.card-box{
-    border:none;
-    border-radius:15px;
-    box-shadow:0 4px 15px rgba(0,0,0,0.08);
-    overflow:hidden;
-}
-
-.menu-img{
-    width:100%;
-    height:140px;
-    object-fit:cover;
-}
-
-</style>
 </head>
 
 <body>
@@ -166,31 +117,19 @@ body{
 
 <div class="sidebar">
 
-    <h3 class="fw-bold">
-        <i class="fa-solid fa-bowl-food"></i>
-        Baso Jafra
-    </h3>
-
-    <hr>
-
-    <a href="/dashboard">
-        <i class="fa fa-home"></i>
-        Dashboard
-    </a>
-
-    <a href="/penjualan">
-        <i class="fa fa-cart-shopping"></i>
-        Transaksi
-    </a>
-
-    <a href="/logout">
-        <i class="fa fa-right-from-bracket"></i>
-        Logout
-    </a>
     <div>
-        <div class="logo">
-            <i class="fa-solid fa-bowl-food"></i>
-            Baso Jafra
+
+        <div class="logo text-center">
+
+            <img src="{{ asset('/logo.png') }}"
+                alt="Logo Baso Jafra"
+                width="120"
+                class="mb-2">
+
+            <div class="fw-bold text-white">
+                Baso Jafra
+            </div>
+
         </div>
 
         <div class="sidebar-menu">
@@ -211,13 +150,16 @@ body{
             </a>
 
         </div>
+
     </div>
 
     <div class="logout">
+
         <a href="/logout">
             <i class="fa-solid fa-right-from-bracket"></i>
             Logout
         </a>
+
     </div>
 
 </div>
@@ -263,7 +205,9 @@ body{
 
                         <div class="p-3 text-center">
 
-                            <h6 class="fw-bold">{{ $m->nama_menu }}</h6>
+                            <h6 class="fw-bold">
+                                {{ $m->nama_menu }}
+                            </h6>
 
                             <h5 class="text-primary">
                                 Rp {{ number_format($m->harga) }}
@@ -305,7 +249,7 @@ body{
 
             <div class="card card-box p-3">
 
-                <h5>
+                <h5 class="fw-bold mb-3">
                     Keranjang
                 </h5>
 
@@ -315,33 +259,49 @@ body{
 
                     @if(session('cart'))
 
-                        @foreach(session('cart') as $item)
+                        @foreach(session('cart') as $id => $item)
 
                         @php $total += $item['subtotal']; @endphp
 
-                        <tr>
+                    <tr>
 
-                            <td>
+                        <td width="100%">
 
-                                <b>
-                                    {{ $item['nama_menu'] }}
-                                </b>
+                            <div class="d-flex justify-content-between align-items-start">
 
-                                <br>
+                                <div>
 
-                                <small>
-                                    {{ $item['qty'] }}
-                                    x
-                                    {{ number_format($item['harga']) }}
-                                </small>
+                                    <b>{{ $item['nama_menu'] }}</b>
 
-                            </td>
+                                    <br>
 
-                            <td class="text-end">
+                                    <small>
+                                        {{ $item['qty'] }} x {{ number_format($item['harga']) }}
+                                    </small>
 
-                                Rp {{ number_format($item['subtotal']) }}
+                                </div>
 
-                            </td>
+                                <div class="d-flex align-items-center">
+
+                                    <span class="me-3">
+                                        Rp {{ number_format($item['subtotal']) }}
+                                    </span>
+
+                                    <a href="/penjualan/hapus/{{ $id }}"
+                                    class="text-danger">
+
+                                        <i class="fa fa-trash"></i>
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
 
                         </tr>
 
@@ -370,9 +330,7 @@ body{
                     <b>Total</b>
 
                     <b class="text-primary">
-
                         Rp {{ number_format($total) }}
-
                     </b>
 
                 </div>
@@ -380,6 +338,62 @@ body{
             </div>
 
             <!-- CHECKOUT -->
+            @if(session('cart')) 
+            <div class="card card-box p-3 mt-3">
+
+                <h5 class="fw-bold mb-3">
+                
+                        <h5 class="fw-bold mb-3">
+                🍜 Rekomendasi Menu
+            </h5>
+
+            @forelse($rekomendasi as $r)
+            
+            <div class="card mb-2">
+
+                @if($r->foto)
+                    <img src="{{ asset('storage/' . $r->foto) }}"
+                        class="card-img-top"
+                        style="height:120px; object-fit:cover;">
+                @endif
+
+                <div class="card-body text-center">
+
+                    <b>{{ $r->nama_menu }}</b>
+
+                    <br>
+
+                    <span class="text-primary">
+                        Rp {{ number_format($r->harga) }}
+                    </span>
+
+                    <form action="/penjualan/tambah/{{ $r->id }}" method="POST" class="mt-2">
+
+                        @csrf
+
+                        <button type="submit" class="btn btn-success btn-sm w-100">
+
+                            <i class="fa fa-plus"></i>
+                            Tambah
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            @empty
+
+            <p class="text-muted">
+                Tidak ada rekomendasi
+            </p>
+
+            @endforelse
+
+            </div>
+            @endif
 
             <div class="card card-box p-3 mt-3">
 
@@ -402,9 +416,7 @@ body{
                         @forelse($karyawan as $k)
 
                             <option value="{{ $k->id }}">
-
                                 {{ $k->nama_pegawai }}
-
                             </option>
 
                         @empty
@@ -431,7 +443,7 @@ body{
 
     </div>
 
-    <!-- RIWAYAT TRANSAKSI -->
+    <!-- RIWAYAT -->
 
     <div class="card card-box p-4 mt-4">
 
@@ -463,22 +475,12 @@ body{
 
                 <tr>
 
-                    <td>
+                    <td>{{ $p->no_faktur }}</td>
 
-                        {{ $p->no_faktur }}
-
-                    </td>
+                    <td>{{ $p->tgl }}</td>
 
                     <td>
-
-                        {{ $p->tgl }}
-
-                    </td>
-
-                    <td>
-
                         Rp {{ number_format($p->total) }}
-
                     </td>
 
                     <td>
@@ -486,17 +488,13 @@ body{
                         @if($p->status == 'pending')
 
                             <span class="badge bg-warning">
-
                                 Pending
-
                             </span>
 
                         @else
 
                             <span class="badge bg-success">
-
                                 Lunas
-
                             </span>
 
                         @endif

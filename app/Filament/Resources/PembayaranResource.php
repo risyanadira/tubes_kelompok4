@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PembayaranResource\Pages;
 use App\Models\Pembayaran;
+use App\Models\Penjualan;
+use App\Models\MetodePembayaran;
 
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -29,27 +31,54 @@ class PembayaranResource extends Resource
 
                 // pilih penjualan
                 Forms\Components\Select::make('penjualan_id')
-                    ->relationship('penjualan', 'id')
+                    ->relationship('penjualan', 'no_faktur')
                     ->default(request()->get('penjualan_id'))
                     ->required()
                     ->label('Pilih Penjualan')
-                    ->searchable(),
+                    ->searchable()
+                    ->live()
+                    ->afterStateUpdated(function ($state, callable $set) {
+
+                        $penjualan = Penjualan::find($state);
+
+                        if ($penjualan) {
+                            $set('gross_amount', $penjualan->total);
+                        }
+                    }),
 
                 // tanggal bayar
                 Forms\Components\DatePicker::make('tgl_bayar')
                     ->required()
-                    ->label('Tanggal Bayar'),
+                    ->label('Tanggal Bayar')
+                    ->default(now()),
 
-                // kode metode pembayaran
-                Forms\Components\TextInput::make('kode_metode')
-                    ->required()
-                    ->label('Kode Metode'),
+                // metode pembayaran
+                Forms\Components\Select::make('kode_metode')
+                    ->label('Metode Pembayaran')
+                    ->options(
+                        MetodePembayaran::pluck('nama_metode', 'kode_metode')
+                    )
+                    ->searchable()
+                    ->required(),
 
-                // jumlah pembayaran
+                // jumlah pembayaran otomatis dari total penjualan
                 Forms\Components\TextInput::make('gross_amount')
+                    ->label('Jumlah Bayar')
                     ->numeric()
                     ->required()
-                    ->label('Jumlah Bayar'),
+                    ->default(function () {
+
+                        $penjualanId = request()->get('penjualan_id');
+
+                        if ($penjualanId) {
+                            $penjualan = Penjualan::find($penjualanId);
+
+                            return $penjualan?->total;
+                        }
+
+                        return null;
+                    })
+                    ->readOnly(),
 
                 // status pembayaran
                 Forms\Components\Select::make('status')
@@ -59,25 +88,24 @@ class PembayaranResource extends Resource
                     ])
                     ->required(),
 
-                // tipe pembayaran
-                Forms\Components\TextInput::make('payment_type')
-                    ->label('Tipe Pembayaran'),
-
-                // transaction id
-                Forms\Components\TextInput::make('transaction_id')
-                    ->label('Transaction ID'),
-
-                // order id
+                // order id otomatis
                 Forms\Components\TextInput::make('order_id')
-                    ->label('Order ID'),
+                    ->label('Order ID')
+                    ->default(function () {
 
-                // status code
-                Forms\Components\TextInput::make('status_code')
-                    ->label('Status Code'),
+                        $last = Pembayaran::latest()->first();
 
-                // merchant id
-                Forms\Components\TextInput::make('merchant_id')
-                    ->label('Merchant ID'),
+                        if (!$last || !$last->order_id) {
+                            return 'ORD001';
+                        }
+
+                        $number = (int) substr($last->order_id, 3);
+
+                        $number++;
+
+                        return 'ORD' . str_pad($number, 3, '0', STR_PAD_LEFT);
+                    })
+                    ->readOnly(),
 
             ]);
     }
@@ -87,45 +115,28 @@ class PembayaranResource extends Resource
         return $table
             ->columns([
 
-                // id penjualan
-                Tables\Columns\TextColumn::make('penjualan.id')
-                    ->label('ID Penjualan'),
+                Tables\Columns\TextColumn::make('penjualan.no_faktur')
+                    ->label('No Faktur'),
 
-                // tanggal bayar
                 Tables\Columns\TextColumn::make('tgl_bayar')
                     ->date()
-                    ->sortable()
-                    ->searchable(),
-
-                // metode pembayaran
-                Tables\Columns\TextColumn::make('kode_metode')
-                    ->label('Metode')
-                    ->searchable(),
-
-                // jumlah bayar
-                Tables\Columns\TextColumn::make('gross_amount')
-                    ->money('IDR')
                     ->sortable(),
 
-                // status pembayaran
+                Tables\Columns\TextColumn::make('kode_metode')
+                    ->label('Metode'),
+
+                Tables\Columns\TextColumn::make('gross_amount')
+                    ->money('IDR'),
+
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([
                         'warning' => 'pending',
                         'success' => 'lunas',
                     ]),
 
-                // tipe pembayaran
-                Tables\Columns\TextColumn::make('payment_type')
-                    ->label('Tipe'),
+                Tables\Columns\TextColumn::make('order_id')
+                    ->label('Order ID'),
 
-                // transaction id
-                Tables\Columns\TextColumn::make('transaction_id')
-                    ->label('Transaction ID')
-                    ->limit(15),
-
-            ])
-            ->filters([
-                //
             ])
             ->actions([
 
