@@ -85,7 +85,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email')->searchable(),
                 BadgeColumn::make('user_group')
                     ->color(fn ($state) => match ($state) {
-                        'admin' => 'warning',
+                        'admin' => 'success',
                         'owner' => 'success',
                         default => 'success',
                     }),

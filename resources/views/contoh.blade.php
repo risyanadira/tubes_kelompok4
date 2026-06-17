@@ -1,6 +1,3 @@
-78% penyimpanan digunakan … Jika ruang penyimpanan sudah penuh, Anda tidak dapat membuat, mengedit, dan mengupload file. Dapatkan penyimpanan 30 GB seharga Rp 14.500/bln.
-1
-100%
 <!DOCTYPE html>
 <html>
 <head>

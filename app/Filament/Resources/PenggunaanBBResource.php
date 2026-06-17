@@ -27,6 +27,8 @@ class PenggunaanBBResource extends Resource
     protected static ?string $navigationGroup = 'Transaksi';
     protected static ?string $navigationLabel = 'Penggunaan';
 
+    protected static ?string $navigationLabel = 'Penggunaan BB';
+
     public static function form(Form $form): Form
 {
     return $form

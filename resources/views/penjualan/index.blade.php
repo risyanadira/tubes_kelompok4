@@ -44,6 +44,13 @@
             border-radius: 12px;
         }
 
+        .logo{
+            color:white;
+            font-size:26px;
+            font-weight:bold;
+            margin-bottom:40px;
+        }
+
         .sidebar-menu a{
             display:block;
             color:white;
