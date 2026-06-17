@@ -10,17 +10,25 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::table('users', function (Blueprint $table) {
-        // Menambahkan kolom user_group setelah kolom password
-        $table->string('user_group')->nullable()->after('password');
-    });
-}
+    {
+        if (!Schema::hasColumn('users', 'user_group')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('user_group')
+                    ->nullable()
+                    ->after('password');
+            });
+        }
+    }
 
-public function down(): void
-{
-    Schema::table('users', function (Blueprint $table) {
-        $table->dropColumn('user_group');
-    });
-}
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        if (Schema::hasColumn('users', 'user_group')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('user_group');
+            });
+        }
+    }
 };
