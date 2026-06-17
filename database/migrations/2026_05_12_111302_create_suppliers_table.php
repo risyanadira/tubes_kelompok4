@@ -7,22 +7,12 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Kosongkan fungsi ini agar Laravel melewayati pembuatan tabel suppliers
+     * yang aslinya sudah ada di database kamu.
      */
     public function up(): void
     {
-        Schema::create('suppliers', function (Blueprint $table) {
-
-            $table->string('id')->primary();
-
-            $table->string('nama_supplier');
-
-            $table->text('alamat')->nullable();
-
-            $table->string('no_telp')->nullable();
-
-            $table->timestamps();
-        });
+        // Kosong melompong, sengaja dilewati demi keamanan datamu
     }
 
     /**
@@ -30,6 +20,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('suppliers');
+        // Kosong
     }
 };

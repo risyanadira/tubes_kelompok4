@@ -3,41 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PenjualanResource\Pages;
-use App\Models\Penjualan;
-use App\Models\Menu;
-use App\Models\Karyawan;
-
+use App\Models\Penjualan; // Pastikan modelnya adalah Penjualan
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Placeholder;
-
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-
-use Filament\Tables\Columns\TextColumn;
-
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\Action;
-
-use App\Filament\Exports\PenjualanExporter;
-use Barryvdh\DomPDF\Facade\Pdf;
-
 class PenjualanResource extends Resource
 {
-    protected static ?string $model = Penjualan::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static ?string $model = Penjualan::class; // Harus Penjualan, bukan Jurnal
 
     protected static ?string $navigationGroup = 'Transaksi';
 
@@ -187,7 +162,6 @@ class PenjualanResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-
             ->columns([
 
                 TextColumn::make('no_faktur')
